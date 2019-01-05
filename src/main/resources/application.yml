@@ -1,0 +1,50 @@
+
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    #检擦模板是否存在
+    check-template: true
+    #是否缓存，开发模式下设置为false，避免改了模板还要重启服务器，线上设置为true，可以提高性能。
+    cache: false
+    #模板后缀
+    suffix: .html
+    #编码格式
+    encoding: UTF-8
+  mvc:
+    static-path-pattern: /static/**
+  servlet:
+  #上传文件最大值
+    multipart:
+      max-file-size: 1024MB
+  quartz:
+    #使用JDBC存储任务
+    job-store-type: jdbc
+    jdbc:
+      comment-prefix: QRTZ_
+      initialize-schema: always
+    overwrite-existing-jobs: false
+  mail:
+    host: smtp.qq.com
+    password: kxnuapyymkybgihc
+    default-encoding: UTF-8
+    username: 1184421183@qq.com
+    port: 587
+mail:
+ fromMail:
+  addr: 1184421183@qq.com
+management:
+  endpoint:
+    health:
+      show-details: always
+    shutdown: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+mybatis-plus:
+  type-aliases-package: com.crsm.maker.*.mapper
+  mapper-locations: classpath*:mapper/*/*.xml
+  global-config:
+    refresh: true
+server:
+  port: 8000
