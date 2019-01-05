@@ -1,7 +1,8 @@
 package com.crsm.maker.resourcesFile.controller;
 
+import com.crsm.maker.resourcesFile.service.ISystemResourceService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,8 @@ import java.io.IOException;
 @RestController
 public class SystemResourceController {
 
+    @Autowired
+    private ISystemResourceService iSystemResourceService;
 
     @RequestMapping("/multipartFile")
     public Object multiUplod(HttpServletRequest request,@RequestParam("file")MultipartFile file){
