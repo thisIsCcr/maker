@@ -24,14 +24,17 @@ spring:
       initialize-schema: always
     overwrite-existing-jobs: false
   mail:
-    host: smtp.qq.com
-    password: kxnuapyymkybgihc
+    host: smtp.163.com
+    password: isCcr163mail
     default-encoding: UTF-8
-    username: 1184421183@qq.com
-    port: 587
+    username: 17301918183@163.com
+    #http://help.163.com/09/1223/14/5R7P3QI100753VB8.html
+    #163邮箱端口 ssl加密 465 !25 QQ邮箱 587
+    port: 25
 mail:
  fromMail:
-  addr: 1184421183@qq.com
+  #邮箱发信人必须与登陆人一直
+  addr: 17301918183@163.com
 management:
   endpoint:
     health:

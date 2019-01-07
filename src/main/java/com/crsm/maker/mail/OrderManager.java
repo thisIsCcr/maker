@@ -2,6 +2,7 @@ package com.crsm.maker.mail;
 
 /**
  * 发送邮件接口
+ *
  */
 public interface OrderManager {
 

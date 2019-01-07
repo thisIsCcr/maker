@@ -37,7 +37,7 @@ public class MailServiceTest {
                 "    <h3>hello world ! 这是一封Html邮件!</h3>\n" +
                 "</body>\n" +
                 "</html>";
-        orderManager.sendHtmlMail("577290947@qq.com","这是模板测试邮件",emailContent);
+        orderManager.sendHtmlMail("1184421183@qq.com","这是模板测试邮件",emailContent);
     }
 
     @Test
