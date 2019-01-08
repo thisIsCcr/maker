@@ -25,31 +25,36 @@ public class JobController {
         addJob(jobClassName, jobGroupName, cronExpression);
     }
 
+    /**
+     * 添加定时器
+     * @param jobClassName
+     * @param jobGroupName
+     * @param cronExpression
+     * @throws Exception
+     */
     public void addJob(String jobClassName, String jobGroupName, String cronExpression) throws Exception {
-
         // 启动调度器
         scheduler.start();
-
         //构建job信息
         JobDetail jobDetail = JobBuilder.newJob(getClass(jobClassName).getClass()).withIdentity(jobClassName, jobGroupName).build();
-
         //表达式调度构建器(即任务执行的时间)
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
-
         //按新的cronExpression表达式构建一个新的trigger
-        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobClassName, jobGroupName)
-                .withSchedule(scheduleBuilder).build();
-
+        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobClassName, jobGroupName).withSchedule(scheduleBuilder).build();
         try {
             scheduler.scheduleJob(jobDetail, trigger);
-
         } catch (SchedulerException e) {
             System.out.println("创建定时任务失败" + e);
             throw new Exception("创建定时任务失败");
         }
     }
 
-
+    /**
+     * 暂停任务
+     * @param jobClassName
+     * @param jobGroupName
+     * @throws Exception
+     */
     @PostMapping(value = "/pausejob")
     public void pausejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         jobPause(jobClassName, jobGroupName);
@@ -59,7 +64,12 @@ public class JobController {
         scheduler.pauseJob(JobKey.jobKey(jobClassName, jobGroupName));
     }
 
-
+    /**
+     * 恢复任务
+     * @param jobClassName
+     * @param jobGroupName
+     * @throws Exception
+     */
     @PostMapping(value = "/resumejob")
     public void resumejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         jobresume(jobClassName, jobGroupName);
@@ -69,7 +79,13 @@ public class JobController {
         scheduler.resumeJob(JobKey.jobKey(jobClassName, jobGroupName));
     }
 
-
+    /**
+     * 修改任务时间
+     * @param jobClassName
+     * @param jobGroupName
+     * @param cronExpression
+     * @throws Exception
+     */
     @PostMapping(value = "/reschedulejob")
     public void rescheduleJob(@RequestParam(value = "jobClassName") String jobClassName,
                               @RequestParam(value = "jobGroupName") String jobGroupName,
@@ -82,12 +98,9 @@ public class JobController {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobClassName, jobGroupName);
             // 表达式调度构建器
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
-
             CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-
             // 按新的cronExpression表达式重新构建trigger
             trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
-
             // 按新的trigger重新设置job执行
             scheduler.rescheduleJob(triggerKey, trigger);
         } catch (SchedulerException e) {
@@ -96,7 +109,12 @@ public class JobController {
         }
     }
 
-
+    /**
+     * 移除任务
+     * @param jobClassName
+     * @param jobGroupName
+     * @throws Exception
+     */
     @PostMapping(value = "/deletejob")
     public void deletejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         jobdelete(jobClassName, jobGroupName);
@@ -108,7 +126,12 @@ public class JobController {
         scheduler.deleteJob(JobKey.jobKey(jobClassName, jobGroupName));
     }
 
-
+    /**
+     * 必须是Job（BaseJob）的子类，
+     * @param classname
+     * @return
+     * @throws Exception
+     */
     public static BaseJob getClass(String classname) throws Exception {
         Class<?> class1 = Class.forName(classname);
         return (BaseJob) class1.newInstance();

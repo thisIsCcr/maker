@@ -51,6 +51,7 @@ public class SystemResourceController {
             e.printStackTrace();
             return "文件上传失败";
         }
+        log.info("文件上传成功，文件名：{}",fileName);
         return "文件上传成功";
     }
 }
