@@ -1,6 +1,7 @@
 package com.crsm.maker.quartz.controller;
 
 import com.crsm.maker.quartz.BaseJob;
+import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
  * 提供定时任务操作
  * creat by Ccr on 2019/1/6
  **/
+@Slf4j
 @RestController
 @RequestMapping(value = "/job")
 public class JobController {
@@ -21,8 +23,8 @@ public class JobController {
     public void addjob(@RequestParam(value = "jobClassName") String jobClassName,
                        @RequestParam(value = "jobGroupName") String jobGroupName,
                        @RequestParam(value = "cronExpression") String cronExpression) throws Exception {
-        System.out.println("添加定时任务");
         addJob(jobClassName, jobGroupName, cronExpression);
+        log.info("添加定时器成功：{}",jobGroupName);
     }
 
     /**
@@ -58,6 +60,7 @@ public class JobController {
     @PostMapping(value = "/pausejob")
     public void pausejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         jobPause(jobClassName, jobGroupName);
+        log.info("暂停任务成功：{}",jobGroupName);
     }
 
     public void jobPause(String jobClassName, String jobGroupName) throws Exception {
@@ -73,6 +76,7 @@ public class JobController {
     @PostMapping(value = "/resumejob")
     public void resumejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         jobresume(jobClassName, jobGroupName);
+        log.info("恢复任务成功：{}",jobGroupName);
     }
 
     public void jobresume(String jobClassName, String jobGroupName) throws Exception {
@@ -103,6 +107,7 @@ public class JobController {
             trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
             // 按新的trigger重新设置job执行
             scheduler.rescheduleJob(triggerKey, trigger);
+            log.info("修改任务时间成功：{}",jobGroupName);
         } catch (SchedulerException e) {
             System.out.println("更新定时任务失败" + e);
             throw new Exception("更新定时任务失败");
@@ -118,6 +123,7 @@ public class JobController {
     @PostMapping(value = "/deletejob")
     public void deletejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         jobdelete(jobClassName, jobGroupName);
+        log.info("移除任务成功：{}",jobGroupName);
     }
 
     public void jobdelete(String jobClassName, String jobGroupName) throws Exception {

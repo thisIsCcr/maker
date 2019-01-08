@@ -36,7 +36,8 @@ public class SystemResourceController {
         }
         String upuserName=request.getSession().getServletContext().getServletContextName();
         String fileName=file.getOriginalFilename();
-        String filePath="D:/文件上传测试/";
+        String filePath=upuserName+"/";
+        System.out.println("upuserName:"+upuserName);
         File fileData=new File(filePath);
         if(!fileData.exists()){
             fileData.mkdirs();

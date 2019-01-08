@@ -1,4 +1,5 @@
-
+server:
+  port: 8080
 spring:
   thymeleaf:
     prefix: classpath:/templates/
@@ -20,7 +21,9 @@ spring:
     #使用JDBC存储任务
     job-store-type: jdbc
     jdbc:
+      #对应表格前缀
       comment-prefix: QRTZ_
+      #启动服务时初始化
       initialize-schema: always
     overwrite-existing-jobs: false
   mail:
@@ -29,11 +32,11 @@ spring:
     default-encoding: UTF-8
     username: 17301918183@163.com
     #http://help.163.com/09/1223/14/5R7P3QI100753VB8.html
-    #163邮箱端口 ssl加密 465 !25 QQ邮箱 587
+    #163邮箱端口 ssl加密 465 25 QQ邮箱 587
     port: 25
 mail:
  fromMail:
-  #邮箱发信人必须与登陆人一直
+  #邮箱发信人必须与登陆人一致
   addr: 17301918183@163.com
 management:
   endpoint:
@@ -49,5 +52,3 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*/*.xml
   global-config:
     refresh: true
-server:
-  port: 8000
