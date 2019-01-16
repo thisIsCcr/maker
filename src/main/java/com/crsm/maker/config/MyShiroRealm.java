@@ -42,26 +42,15 @@ public class MyShiroRealm extends AuthorizingRealm {
     }
 
     public static void main(String[] args) {
-        /* 164 */
         String algorithmName = "md5";
-        /* 165 */
         String username = "ccr";
-        /* 166 */
         String password = "123456";
-        /* 167 */
         String salt1 = username;
-        /* 168 */
         String salt2 = new SecureRandomNumberGenerator().nextBytes().toHex();
-        /* 169 */
         int hashIterations = 1024;
-        /* 170 */
-        SimpleHash hash = new SimpleHash(algorithmName, password,
-                /* 171 */       salt1 + salt2, hashIterations);
-        /* 172 */
+        SimpleHash hash = new SimpleHash(algorithmName, password,salt1 + salt2, hashIterations);
         String encodedPassword = hash.toHex();
-        /* 173 */
         System.out.println(encodedPassword);
-        /* 174 */
         System.out.println(salt2);
     }
 }

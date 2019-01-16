@@ -1,13 +1,16 @@
 package com.crsm.maker;
 
 import com.crsm.maker.mail.OrderManager;
+import com.crsm.maker.user.entity.SysTree;
+import com.crsm.maker.user.mapper.SysTreeMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
+
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -19,7 +22,18 @@ public class MailServiceTest {
     @Autowired
     TemplateEngine templateEngine;
 
+    @Autowired
+    SysTreeMapper sysTreeMapper;
+
     @Test
+    public void mapper(){
+        List<SysTree> lis=sysTreeMapper.getMenuData();
+        for (SysTree item:lis){
+            System.out.println(item.toString());
+        }
+    }
+
+    /*@Test
     public void testSimpleMail() throws Exception {
         orderManager.sendSimpleMail("577290947@qq.com","test simple mail"," hello this is simple mail");
     }
@@ -47,6 +61,6 @@ public class MailServiceTest {
         String imgPath = "C:\\Users\\Administrator\\Desktop\\QQ图片20190104172613.jpg";
 
         orderManager.sendInlineResourceMail("577290947@qq.com", "主题：这是有图片的邮件", content, imgPath, rscId);
-    }
+    }*/
 
 }

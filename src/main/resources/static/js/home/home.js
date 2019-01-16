@@ -50,22 +50,35 @@ $(document).ready(function() {
 
 	//设置打开动画
 	var $icon = $("#my-icon");
-	var API = $menu.data("mmenu");
+	menuContext = $menu.data("mmenu");
 	//打开关闭
 	$icon.on("click", function() {
 		if($icon.hasClass("is-active")) {
-			API.close();
+			menuContext.close();
 		} else {
-			API.open()
+			menuContext.open()
 		}
 	});
+	$.ajax({
+        url:"http://localhost:8080/getMenuData",
+        type:"get",
+        dataType:"json",
+        success:function (result) {
 
-	API.bind("open:finish", function() {
+            if(result.isSuccess){
+                for (var i=0;i<result.data.length;i++){
+
+                }
+            }
+        }
+    })
+
+	menuContext.bind("open:finish", function() {
 		setTimeout(function() {
 			$icon.addClass("is-active");
 		}, 100);
 	});
-	API.bind("close:finish", function() {
+	menuContext.bind("close:finish", function() {
 		setTimeout(function() {
 			$icon.removeClass("is-active");
 		}, 100);
@@ -153,6 +166,10 @@ $(document).ready(function() {
         $body.appendChild($elem);
     };
 })
+
+function addMenu(){
+    menuContext.initPanels($("#menu-item"))
+}
 
 $(window).scroll(function() {
 	if($(".navbar").offset().top > 50) {

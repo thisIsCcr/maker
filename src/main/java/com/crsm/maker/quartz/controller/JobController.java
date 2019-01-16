@@ -1,10 +1,19 @@
 package com.crsm.maker.quartz.controller;
 
 import com.crsm.maker.quartz.BaseJob;
+import com.crsm.maker.quartz.entity.JobEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 提供定时任务操作
@@ -18,6 +27,65 @@ public class JobController {
     @Autowired
     private Scheduler scheduler;
 
+
+    /**
+     * 获取所有作业详情
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("list")
+    public Object getSchedulerJobInfo() throws Exception {
+        List<JobEntity> jobInfos = new ArrayList<JobEntity>();
+        List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
+        for (String triggerGroupName : triggerGroupNames) {
+            Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(triggerGroupName));
+            for (TriggerKey triggerKey : triggerKeySet) {
+                Trigger t = scheduler.getTrigger(triggerKey);
+                if (t instanceof CronTrigger) {
+                    CronTrigger trigger = (CronTrigger) t;
+                    JobKey jobKey = trigger.getJobKey();
+                    JobDetail jd = scheduler.getJobDetail(jobKey);
+                    JobEntity jobInfo = new JobEntity();
+                    jobInfo.setJobName(jobKey.getName());
+
+                    jobInfo.setJobGroup(jobKey.getGroup());
+                    //执行器名称
+                    jobInfo.setTriggerName(triggerKey.getName());
+                    //执行器组名称
+                    jobInfo.setTriggerGroupName(triggerKey.getGroup());
+                    //时间Cron表达式
+                    jobInfo.setCronExpr(trigger.getCronExpression());
+                    //下次运行时间
+                    jobInfo.setNextFireTime(trigger.getNextFireTime());
+                    //上次运行时间
+                    jobInfo.setPreviousFireTime(trigger.getPreviousFireTime());
+                    //启动时间
+                    jobInfo.setStartTime(trigger.getStartTime());
+                    //结束时间
+                    jobInfo.setEndTime(trigger.getEndTime());
+                    jobInfo.setJobClass(jd.getJobClass().getCanonicalName());
+                    // jobInfo.setDuration(Long.parseLong(jd.getDescription()));
+                    Trigger.TriggerState triggerState = scheduler
+                            .getTriggerState(trigger.getKey());
+                    jobInfo.setJobStatus(triggerState.toString());// NONE无,
+                    // NORMAL正常,
+                    // PAUSED暂停,
+                    // COMPLETE完全,
+                    // ERROR错误,
+                    // BLOCKED阻塞
+                    JobDataMap map = scheduler.getJobDetail(jobKey).getJobDataMap();
+                    if (null != map && map.size() != 0) {
+                        jobInfo.setCount(Integer.parseInt((String) map.get("count")));
+                        jobInfo.setJobDataMap(map);
+                    } else {
+                        jobInfo.setJobDataMap(new JobDataMap());
+                    }
+                    jobInfos.add(jobInfo);
+                }
+            }
+        }
+        return jobInfos;
+    }
 
     @PostMapping(value = "/addjob")
     public void addjob(@RequestParam(value = "jobClassName") String jobClassName,

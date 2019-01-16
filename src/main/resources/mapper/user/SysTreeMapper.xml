@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crsm.maker.user.mapper.SysTreeMapper">
+
+    <resultMap id="getMenuData_map" type="com.crsm.maker.user.entity.SysTree">
+        <id column="id" property="id"/>
+        <result column="f_rms_id" property="fRmsId"/>
+        <result column="rms_id" property="rmsId"/>
+        <result column="type" property="type"/>
+        <association property="sysRms" javaType="com.crsm.maker.user.entity.SysRms">
+            <result column="rms_name" property="rmsName"/>
+            <result column="rms_iocn" property="rmsIocn"/>
+        </association>
+    </resultMap>
+    
+    
+    <select id="getMenuData" resultMap="getMenuData_map">
+        SELECT
+          *
+        FROM
+          `sys_rms` sr
+        RIGHT JOIN `sys_tree` st ON st.`rms_id`=sr.`id`
+        WHERE st.`type`=0 ORDER BY st.`f_rms_id`
+    </select>
+
+</mapper>

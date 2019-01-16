@@ -1,46 +1,43 @@
 package com.crsm.maker.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.crsm.maker.base.BaseController;
+import com.crsm.maker.user.entity.SysTree;
 import com.crsm.maker.user.entity.SysUser;
+import com.crsm.maker.user.service.ISysTreeService;
 import com.crsm.maker.user.service.ISysUserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 /**
  * creat by Ccr on 2018/12/4
  **/
-@CrossOrigin
-@Controller
-public class logController {
+@RestController
+public class logController extends BaseController {
 
     @Autowired
     ISysUserService iSysUserService;
 
-    @RequestMapping({"/unauth","hi"})
-    public String hello() {
-        return "home";
-    }
+    @Autowired
+    ISysTreeService iSysTreeService;
 
-    @ResponseBody
     @RequestMapping("/getAllUser")
     public Object getAllUser(){
         List<SysUser> sysUser = iSysUserService.list(new QueryWrapper<SysUser>());
         return sysUser;
     }
 
-    @RequestMapping("/")
-    public String enterLoginPage(){
-        return "home";
+    @RequestMapping("/getMenuData")
+    public JSONObject getMenuData(){
+        Subject currentSubject=SecurityUtils.getSubject();
+        System.out.println("是否登录："+currentSubject.isAuthenticated());
+        List<SysTree> list=iSysTreeService.getMenuData();
+        return success(list);
     }
-
-    @RequestMapping("index")
-    public String getIndexPage(){
-        return "index";
-    }
-
 }

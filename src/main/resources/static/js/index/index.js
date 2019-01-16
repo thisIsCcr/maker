@@ -1,7 +1,7 @@
 var wall = null;
 $(function() {
 	$('#table').bootstrapTable({
-		url: "http://192.168.0.136:8080/getAllUser",
+		url: "http://localhost:8080/getAllUser",
 		cache: false,
 		search: true,
 		columns: [{
@@ -56,7 +56,7 @@ $(function() {
 	setInterval(function() {
 		$.ajax({
 			type: "get",
-			url: "http://192.168.0.136:8080/actuator/metrics/system.cpu.usage",
+			url: "http://localhost:8080/actuator/metrics/system.cpu.usage",
 			async: true,
 			success: function(result) {
 				var $usager=$(".progress-bar");
