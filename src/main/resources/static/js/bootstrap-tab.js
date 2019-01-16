@@ -149,9 +149,8 @@
         //如果可关闭,插入关闭图标，并绑定关闭事件
         if (obj.closeable) {
             var ul_li_close = $(this.template.ul_li_close);
-
-            ul_li.find("a").append(ul_li_close);
             ul_li.find("a").append("&nbsp;");
+            ul_li.find("a").append(ul_li_close);
         }
         
         this.$element.find(".nav-tabs:eq(0)").append(ul_li);
@@ -212,11 +211,22 @@
         return href;
     }
 
-
+    /**
+     * 使用占位符替换字符串
+     * @returns {String}
+     */
     String.prototype.format = function () {
-        if (arguments.length == 0) return this;
-        for (var s = this, i = 0; i < arguments.length; i++)
-            s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
-        return s;
+        if(arguments.length == 0) return this;
+        var param = arguments[0];
+        var s = this;
+        if(typeof(param) == 'object') {
+            for(var key in param)
+                s = s.replace(new RegExp("\\{" + key + "\\}", "g"), param[key]);
+            return s;
+        } else {
+            for(var i = 0; i < arguments.length; i++)
+                s = s.replace(new RegExp("\\{" + i + "\\}", "g"), arguments[i]);
+            return s;
+        }
     };
 })(jQuery, window, document)

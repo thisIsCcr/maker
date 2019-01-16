@@ -1,4 +1,3 @@
-var wall = null;
 $(function() {
 	$('#table').bootstrapTable({
 		url: "http://localhost:8080/getAllUser",

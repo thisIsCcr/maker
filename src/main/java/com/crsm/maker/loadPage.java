@@ -25,4 +25,8 @@ public class loadPage {
         return "QuartzJobList";
     }
 
+    @RequestMapping("permission")
+    public String getPermissionPage(){
+        return "permission";
+    }
 }

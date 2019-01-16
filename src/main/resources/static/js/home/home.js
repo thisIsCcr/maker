@@ -4,21 +4,13 @@ $(document).ready(function() {
 			id: 'index',
 			text: '首页',
 			url: "index"
-		}, {
-			id: 'test',
-			text: '测试',
-			url: "test.html"
 		}],
 		showIndex: 0,
 		loadAll: true
 	});
 
-	/*$("#tabContainer").data("tabs").addTab({
-		id: 'test',
-		text: 'addTab',
-		closeable: true,
-		url: 'tab_content.html'
-	});*/
+	tabContext=$("#tabContainer").data("tabs");
+
 	
 	//初始化侧边栏
 	var $menu = $("#my-menu").mmenu({
@@ -48,7 +40,7 @@ $(document).ready(function() {
 		}
 	})
 
-	//设置打开动画
+	//设置展开动画
 	var $icon = $("#my-icon");
 	menuContext = $menu.data("mmenu");
 	//打开关闭
@@ -59,21 +51,53 @@ $(document).ready(function() {
 			menuContext.open()
 		}
 	});
-	$.ajax({
-        url:"http://localhost:8080/getMenuData",
-        type:"get",
-        dataType:"json",
-        success:function (result) {
 
-            if(result.isSuccess){
-                for (var i=0;i<result.data.length;i++){
-
+	setTimeout(function () {
+        $.ajax({
+            url:"http://localhost:8080/getMenuData",
+            type:"get",
+            dataType:"json",
+            success:function (result) {
+                if(result.isSuccess){
+                    var data=result.data;
+                    var structure="<li id='menu-No{0}'><a href='{1}' data-skip='{2}' id='menu-href{3}'>{4}</a></li>";
+                    var fUl="<ul>{0}</ul>";
+                    for (var key in data) {
+                        var content=structure.format(data[key].rmsId,
+                            "javaScript:void(0)",
+                            data[key].sysRms.rmsUrl,
+                            data[key].rmsId,
+                            data[key].sysRms.rmsName,
+                            data[key].sysRms.rmsUrl);
+                        if(data[key].frmsId==0){
+                            $("#menu-No"+data[key].frmsId).find(".mm-listview").append(content);
+                        }else{
+                            content = fUl.format(content);
+                            $("#menu-No"+data[key].frmsId).append(content);
+                        }
+                    }
+                    menuContext.initPanels();
                 }
             }
-        }
-    })
+        })
+    },200)
 
-	menuContext.bind("open:finish", function() {
+    /**
+     * 添加单击事件，展开页面
+     */
+    $(document).on("click", 'li[id^="menu-No"] a[id^="menu-href"]', function (){
+        var url=$(this).attr("data-skip");
+        var title= $(this).text();
+        var id=$(this).attr("id").replace("menu-href","");
+       tabContext.addTab({
+            id: id,
+            text:title,
+            closeable: true,
+            url: url
+        });
+    });
+
+    menuContext.bind("open:finish", function() {
 		setTimeout(function() {
 			$icon.addClass("is-active");
 		}, 100);
@@ -167,9 +191,7 @@ $(document).ready(function() {
     };
 })
 
-function addMenu(){
-    menuContext.initPanels($("#menu-item"))
-}
+
 
 $(window).scroll(function() {
 	if($(".navbar").offset().top > 50) {

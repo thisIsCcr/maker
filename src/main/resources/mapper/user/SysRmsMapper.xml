@@ -2,4 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crsm.maker.user.mapper.SysRmsMapper">
 
+    <select id="getPermissionDataByFid" resultType="com.crsm.maker.user.entity.SysRms">
+      SELECT
+          sr.*
+        FROM
+          `sys_rms` sr
+         RIGHT JOIN `sys_tree` st ON sr.`id`=st.`rms_id`
+         WHERE st.`f_rms_id`=#{fid}
+
+    </select>
 </mapper>

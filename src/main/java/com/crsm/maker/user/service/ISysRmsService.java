@@ -1,7 +1,9 @@
 package com.crsm.maker.user.service;
 
-import com.crsm.maker.user.entity.SysRms;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.crsm.maker.user.entity.SysRms;
+
+import java.util.List;
 
 /**
  * <p>
@@ -12,5 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2019-01-14
  */
 public interface ISysRmsService extends IService<SysRms> {
+
+    public List<SysRms> getPermissionDataByFid(int fid);
 
 }

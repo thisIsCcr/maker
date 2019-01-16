@@ -10,6 +10,7 @@
         <association property="sysRms" javaType="com.crsm.maker.user.entity.SysRms">
             <result column="rms_name" property="rmsName"/>
             <result column="rms_iocn" property="rmsIocn"/>
+            <result column="rms_url" property="rmsUrl"/>
         </association>
     </resultMap>
     
