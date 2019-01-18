@@ -1,6 +1,6 @@
 package com.crsm.maker.resourcesFile.mapper;
 
-import com.crsm.maker.resourcesFile.entity.SystemResource;
+import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component;
  */
 @Mapper
 @Component
-public interface SystemResourceMapper extends BaseMapper<SystemResource> {
+public interface SystemResourceMapper extends BaseMapper<SysResource> {
 
 }

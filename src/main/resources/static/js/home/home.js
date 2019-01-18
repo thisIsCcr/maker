@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    //当前ip(⊙o⊙)…
+    hostname=window.location.hostname;
 	$("#tabContainer").tabs({
 		data: [{
 			id: 'index',
@@ -54,7 +56,7 @@ $(document).ready(function() {
 
 	setTimeout(function () {
         $.ajax({
-            url:"http://localhost:8080/getMenuData",
+            url:"/getMenuData",
             type:"get",
             dataType:"json",
             success:function (result) {

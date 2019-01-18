@@ -1,6 +1,6 @@
 package com.crsm.maker.resourcesFile.service;
 
-import com.crsm.maker.resourcesFile.entity.SystemResource;
+import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author Ccr
  * @since 2018-12-25
  */
-public interface ISystemResourceService extends IService<SystemResource> {
+public interface ISystemResourceService extends IService<SysResource> {
 
 }

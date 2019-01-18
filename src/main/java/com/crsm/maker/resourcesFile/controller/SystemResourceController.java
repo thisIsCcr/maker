@@ -1,6 +1,10 @@
 package com.crsm.maker.resourcesFile.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.crsm.maker.resourcesFile.service.ISystemResourceService;
+import com.crsm.maker.user.entity.SysUser;
+import com.crsm.maker.user.service.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 
 /**
  * <p>
@@ -26,22 +31,36 @@ import java.io.IOException;
 public class SystemResourceController {
 
     @Autowired
-    private ISystemResourceService iSystemResourceService;
+    ISystemResourceService iSystemResourceService;
+
+    @Autowired
+    ISysUserService iSysUserService;
 
     @RequestMapping("/multipartFile")
-    public Object multiUplod(HttpServletRequest request,@RequestParam("file")MultipartFile file){
+    public Object multiUplod(HttpServletRequest request,@RequestParam("file")MultipartFile file,@RequestParam("name")String name) throws IOException {
+        SysUser  user=iSysUserService.getOne(new QueryWrapper<SysUser>().eq("usr_name",name));
+        log.info("上传人员：{}",name);
         if(file.isEmpty()){
             log.warn("未获取文件");
             return "文件上传失败";
         }
-        String upuserName=request.getSession().getServletContext().getServletContextName();
+        String upuserName="upFile";
         String fileName=file.getOriginalFilename();
         String filePath=upuserName+"/";
-        System.out.println("upuserName:"+upuserName);
+        System.out.println("upuserName:"+fileName);
         File fileData=new File(filePath);
         if(!fileData.exists()){
             fileData.mkdirs();
         }
+        filePath+=fileName;
+        SysResource sResource=new SysResource();
+        sResource.setResName(fileName);
+        sResource.setResType(1);
+        sResource.setResCreatetime(LocalDate.now());
+        sResource.setResIsstop(0);
+        sResource.setUserId(user.getId());
+        sResource.setResPath(filePath);
+        iSystemResourceService.save(sResource);
         try {
             FileOutputStream fileOutputStream=new FileOutputStream(filePath+fileName);
             fileOutputStream.write(file.getBytes());
