@@ -47,7 +47,6 @@ public class SystemResourceController {
         String upuserName="upFile";
         String fileName=file.getOriginalFilename();
         String filePath=upuserName+"/";
-        System.out.println("upuserName:"+fileName);
         File fileData=new File(filePath);
         if(!fileData.exists()){
             fileData.mkdirs();

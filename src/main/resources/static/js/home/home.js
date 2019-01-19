@@ -60,6 +60,7 @@ $(document).ready(function() {
             type:"get",
             dataType:"json",
             success:function (result) {
+                console.log(result.isSuccess)
                 if(result.isSuccess){
                     var data=result.data;
                     var structure="<li id='menu-No{0}'><a href='{1}' data-skip='{2}' id='menu-href{3}'>{4}</a></li>";
@@ -71,12 +72,13 @@ $(document).ready(function() {
                             data[key].rmsId,
                             data[key].sysRms.rmsName,
                             data[key].sysRms.rmsUrl);
-                        if(data[key].frmsId==0){
-                            $("#menu-No"+data[key].frmsId).find(".mm-listview").append(content);
+                        if(data[key].fRmsId==0){
+                            $("#menu-No"+data[key].fRmsId).find(".mm-listview").append(content);
                         }else{
                             content = fUl.format(content);
-                            $("#menu-No"+data[key].frmsId).append(content);
+                            $("#menu-No"+data[key].fRmsId).append(content);
                         }
+                        console.log(content)
                     }
                     menuContext.initPanels();
                 }

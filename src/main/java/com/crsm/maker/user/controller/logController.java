@@ -1,6 +1,5 @@
 package com.crsm.maker.user.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.crsm.maker.base.BaseController;
 import com.crsm.maker.user.entity.SysTree;
@@ -34,7 +33,7 @@ public class logController extends BaseController {
     }
 
     @RequestMapping("/getMenuData")
-    public JSONObject getMenuData(){
+    public String getMenuData(){
         Subject currentSubject=SecurityUtils.getSubject();
         System.out.println("是否登录："+currentSubject.isAuthenticated());
         List<SysTree> list=iSysTreeService.getMenuData();

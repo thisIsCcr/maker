@@ -1,5 +1,6 @@
 package com.crsm.maker.quartz.controller;
 
+import com.crsm.maker.base.BaseController;
 import com.crsm.maker.quartz.BaseJob;
 import com.crsm.maker.quartz.entity.JobEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import java.util.Set;
 @Slf4j
 @RestController
 @RequestMapping(value = "/job")
-public class JobController {
+public class JobController extends BaseController {
 
     @Autowired
     private Scheduler scheduler;
@@ -34,7 +35,7 @@ public class JobController {
      * @throws Exception
      */
     @RequestMapping("list")
-    public Object getSchedulerJobInfo() throws Exception {
+    public String getSchedulerJobInfo() throws Exception {
         List<JobEntity> jobInfos = new ArrayList<JobEntity>();
         List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
         for (String triggerGroupName : triggerGroupNames) {
@@ -84,7 +85,7 @@ public class JobController {
                 }
             }
         }
-        return jobInfos;
+        return success(jobInfos);
     }
 
     @PostMapping(value = "/addjob")

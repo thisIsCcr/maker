@@ -1,0 +1,12 @@
+<form  method="post" action="">
+    权限名： <input type="text" name="" />
+    拦截路径：<input type="text" name=""/>
+    展示图标：<input type="text" name=""/>
+    上级菜单：<select name="">
+                <option>根目录</option>
+             </select>
+    分配角色：<select name="">
+                <option>管理员</option>
+              </select>
+    <input type="submit">
+</form>

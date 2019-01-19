@@ -3,6 +3,9 @@ package com.crsm.maker.base;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created  by Ccr on 2019/1/14
  **/
@@ -11,11 +14,11 @@ public class BaseController {
     private Integer status=200;
     private boolean isSuccess=true;
 
-    public JSONObject success(Object msg){
-        JSONObject jsonObject=new JSONObject();
+    public String success(Object msg){
+        Map jsonObject=new HashMap<String,Object>();
         jsonObject.put("data",msg);
         jsonObject.put("status",status);
         jsonObject.put("isSuccess",isSuccess);
-        return jsonObject;
+        return JSONObject.toJSONString(jsonObject);
     }
 }

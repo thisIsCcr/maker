@@ -12,7 +12,7 @@ public class loadPage {
 
     @RequestMapping("/")
     public String enterLoginPage(){
-        return "home";
+        return "base/home";
     }
 
     @RequestMapping("index")

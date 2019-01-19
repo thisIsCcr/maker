@@ -1,40 +1,40 @@
 <script>
     $(function () {
-        var obutton
-        botsTable=$('#rsm-table');
+        obutton = new Object();
+        botsTable = $('#rsm-table');
         botsTable.bootstrapTable({
-            url:"/rms/getAllrmsData",
+            url: "/rms/getAllrmsData",
             cache: false, //禁用缓存
             search: true, //启用搜索
             clickToSelect: true,
-            queryParams:function(params){ //请求数据附加参数
-                var tmp={
-                    fid:0
+            queryParams: function (params) { //请求数据附加参数
+                var tmp = {
+                    fid: 0
                 }
                 return tmp;
             },
-            responseHandler:function(res){       //加载服务器数据之前的处理程序，可以用来格式化数据。
+            responseHandler: function (res) {       //加载服务器数据之前的处理程序，可以用来格式化数据。
                 return res.data;
             },
             onExpandRow: expandSubist, //展开子table事件
-            detailView:true,
+            detailView: true,
             toolbar: '#toolbar',                //工具按钮用哪个容器
             pagination: true,                   //是否显示分页（*）
-            striped:true,                       //隔行变色
+            striped: true,                       //隔行变色
             showColumns: true,                  //是否显示所有的列
             showRefresh: true,                  //是否显示刷新按钮
-            uniqueId:"id",                      //设置主键
-            showToggle:true,
+            uniqueId: "id",                      //设置主键
+            showToggle: true,
             singleSelect: false,
-            onPostBody:function(){
+            onPostBody: function () {
                 console.log("初始化完成")
             },
             columns: [{
                 checkbox: true
-            },{
+            }, {
                 field: 'id',
                 title: 'id',
-                align:"center"
+                align: "center"
             }, {
                 field: 'rmsName',
                 title: '名称',
@@ -57,25 +57,25 @@
          * @param $detail
          */
         function expandSubist(index, row, $detail) {
-            var current=$detail.html("<table></table>").find("table");
+            var current = $detail.html("<table></table>").find("table");
             current.bootstrapTable({
-                url:"/rms/getAllrmsData",
-                detailView:true,
-                responseHandler:function(res){       //加载服务器数据之前的处理程序，可以用来格式化数据。
+                url: "/rms/getAllrmsData",
+                detailView: true,
+                responseHandler: function (res) {       //加载服务器数据之前的处理程序，可以用来格式化数据。
                     return res.data;
                 },
-                showHeader:false, //隐藏列头
+                showHeader: false, //隐藏列头
                 onExpandRow: expandSubist,
-                queryParams:function(params){
-                    var tmp={
-                        fid:row.id
+                queryParams: function (params) {
+                    var tmp = {
+                        fid: row.id
                     }
                     return tmp;
                 },
                 columns: [{
                     field: 'id',
                     title: 'id',
-                    align:"center"
+                    align: "center"
                 }, {
                     field: 'rmsName',
                     title: '名称',
@@ -93,30 +93,37 @@
             //current.find("tr:first").remove();
         }
 
-        obutton.addpermission = function(){
-
-
-        }
-
-
+        $(document).on("click", "#toolbar>button", function () {
+            /*$.alert({
+                title: "操作",
+                content: "内容"
+            })*/
+        })
     })
+    /**
+     * 添加数据
+     */
+    obutton.addAuthenaction = function () {
+
+    }
+
 </script>
 <div class="container-fluid">
-<div class="row">
-    <div class="col-lg-12 Icell">
-        <div id="toolbar" class="btn-group">
-            <button id="btn_add" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
-            </button>
-            <button id="btn_edit" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
-            </button>
-            <button id="btn_delete" type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
-            </button>
-        </div>
-        <table id="rsm-table"></table>
+    <div class="row">
+        <div class="col-lg-12 Icell">
+            <div id="toolbar" class="btn-group">
+                <button id="btn_add" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+                </button>
+                <button id="btn_edit" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+                </button>
+                <button id="btn_delete" type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+                </button>
+            </div>
+            <table id="rsm-table"></table>
 
+        </div>
     </div>
-</div>
 </div>

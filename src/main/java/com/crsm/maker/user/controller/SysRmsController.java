@@ -1,7 +1,6 @@
 package com.crsm.maker.user.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.crsm.maker.base.BaseController;
 import com.crsm.maker.user.service.ISysRmsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class SysRmsController extends BaseController {
     private ISysRmsService iSysRmsService;
 
     @RequestMapping("getAllrmsData")
-    public JSONObject getAllrmsData(@RequestParam("fid")Integer fid){
+    public String getAllrmsData(@RequestParam("fid")Integer fid){
         return success(iSysRmsService.getPermissionDataByFid(fid));
     }
 }
