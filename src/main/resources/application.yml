@@ -17,6 +17,7 @@ spring:
   #上传文件最大值
     multipart:
       max-file-size: 1024MB
+  #quartz定时任务配置
   quartz:
     #使用JDBC存储任务
     job-store-type: jdbc
@@ -26,6 +27,7 @@ spring:
       #启动服务时初始化
       initialize-schema: always
     overwrite-existing-jobs: false
+  #mail邮箱
   mail:
     host: smtp.163.com
     password: isCcr163mail
@@ -34,6 +36,13 @@ spring:
     #http://help.163.com/09/1223/14/5R7P3QI100753VB8.html
     #163邮箱端口 ssl加密 465 25 QQ邮箱 587
     port: 25
+  application:
+    name: spring-boot-rabbitmq-sender
+  rabbitmq:
+    host: 47.98.124.87
+    port: 5672
+    username: Ccr
+    password: 1999ccr..
 mail:
  fromMail:
   #邮箱发信人必须与登陆人一致
