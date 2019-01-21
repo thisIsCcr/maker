@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SenderConf {
     @Bean
-    public Queue Queue() {
+    public Queue hello() {
         return new Queue("hello");
     }
 }

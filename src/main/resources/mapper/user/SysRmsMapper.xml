@@ -9,6 +9,5 @@
           `sys_rms` sr
          RIGHT JOIN `sys_tree` st ON sr.`id`=st.`rms_id`
          WHERE st.`f_rms_id`=#{fid}
-
     </select>
 </mapper>

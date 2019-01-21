@@ -1,82 +1,83 @@
-$(document).ready(function() {
+$(document).ready(function () {
     //当前ip(⊙o⊙)…
-    hostname=window.location.hostname;
-	$("#tabContainer").tabs({
-		data: [{
-			id: 'index',
-			text: '首页',
-			url: "index"
-		}],
-		showIndex: 0,
-		loadAll: true
-	});
+    homeContext = new Object();
+    homeContext.hostname = window.location.hostname;
+    $("#tabContainer").tabs({
+        data: [{
+            id: 'index',
+            text: '首页',
+            url: "index"
+        }],
+        showIndex: 0,
+        loadAll: true
+    });
 
-	tabContext=$("#tabContainer").data("tabs");
+    tabContext = $("#tabContainer").data("tabs");
 
-	
-	//初始化侧边栏
-	var $menu = $("#my-menu").mmenu({
-		/*"extensions":[
-			"position-bottom"				
-		],
-		autoHeight:true*/
-		sidebar: {
-			collapsed: "(min-width:200px)",
-			expanded: "(min-width:100px)"
-		},
-		"iconbar": {
-			"add": true,
-			"top": [
-				"<a href='#/'><i class='glyphicon glyphicon-globe'></i></a>",
-				"<a href='#/'><i class='glyphicon glyphicon-wrench'></i></a>"
-			],
-			"bottom": [
-				"<a href='#/'><i class='glyphicon glyphicon-tasks'></i></a>",
-				"<a href='#/'><i class='glyphicon glyphicon-filter'></i></a>",
-				"<a href='#/'><i class='glyphicon glyphicon-briefcase'></i></a>"
-			]
-		}
-	}, {
-		offCanvas: {
-			pageNodetype: "section"
-		}
-	})
 
-	//设置展开动画
-	var $icon = $("#my-icon");
-	menuContext = $menu.data("mmenu");
-	//打开关闭
-	$icon.on("click", function() {
-		if($icon.hasClass("is-active")) {
-			menuContext.close();
-		} else {
-			menuContext.open()
-		}
-	});
+    //初始化侧边栏
+    var $menu = $("#my-menu").mmenu({
+        /*"extensions":[
+            "position-bottom"
+        ],
+        autoHeight:true*/
+        sidebar: {
+            collapsed: "(min-width:200px)",
+            expanded: "(min-width:100px)"
+        },
+        "iconbar": {
+            "add": true,
+            "top": [
+                "<a href='#/'><i class='glyphicon glyphicon-globe'></i></a>",
+                "<a href='#/'><i class='glyphicon glyphicon-wrench'></i></a>"
+            ],
+            "bottom": [
+                "<a href='#/'><i class='glyphicon glyphicon-tasks'></i></a>",
+                "<a href='#/'><i class='glyphicon glyphicon-filter'></i></a>",
+                "<a href='#/'><i class='glyphicon glyphicon-briefcase'></i></a>"
+            ]
+        }
+    }, {
+        offCanvas: {
+            pageNodetype: "section"
+        }
+    })
 
-	setTimeout(function () {
+    //设置展开动画
+    var $icon = $("#my-icon");
+    menuContext = $menu.data("mmenu");
+    //打开关闭
+    $icon.on("click", function () {
+        if ($icon.hasClass("is-active")) {
+            menuContext.close();
+        } else {
+            menuContext.open()
+        }
+    });
+
+    setTimeout(function () {
         $.ajax({
-            url:"/getMenuData",
-            type:"get",
-            dataType:"json",
-            success:function (result) {
+            url: "/getMenuData",
+            type: "get",
+            dataType: "json",
+            success: function (result) {
                 console.log(result.isSuccess)
-                if(result.isSuccess){
-                    var data=result.data;
-                    var structure="<li id='menu-No{0}'><a href='{1}' data-skip='{2}' id='menu-href{3}'>{4}</a></li>";
-                    var fUl="<ul>{0}</ul>";
+                if (result.isSuccess) {
+                    var data = result.data;
+                    var structure = "<li id='menu-No{0}'><a href='{1}' data-skip='{2}' id='menu-href{3}'>{4}</a></li>";
+                    var fUl = "<ul>{0}</ul>";
                     for (var key in data) {
-                        var content=structure.format(data[key].rmsId,
+                        var content = structure.format(data[key].rmsId,
                             "javaScript:void(0)",
                             data[key].sysRms.rmsUrl,
                             data[key].rmsId,
                             data[key].sysRms.rmsName,
                             data[key].sysRms.rmsUrl);
-                        if(data[key].fRmsId==0){
-                            $("#menu-No"+data[key].fRmsId).find(".mm-listview").append(content);
-                        }else{
+                        if (data[key].fRmsId == 0) {
+                            $("#menu-No" + data[key].fRmsId).find(".mm-listview").append(content);
+                        } else {
                             content = fUl.format(content);
-                            $("#menu-No"+data[key].fRmsId).append(content);
+                            $("#menu-No" + data[key].fRmsId).append(content);
                         }
                         console.log(content)
                     }
@@ -84,51 +85,51 @@ $(document).ready(function() {
                 }
             }
         })
-    },200)
+    }, 200)
 
     /**
      * 添加单击事件，展开页面
      */
-    $(document).on("click", 'li[id^="menu-No"] a[id^="menu-href"]', function (){
-        var url=$(this).attr("data-skip");
-        var title= $(this).text();
-        var id=$(this).attr("id").replace("menu-href","");
-       tabContext.addTab({
+    $(document).on("click", 'li[id^="menu-No"] a[id^="menu-href"]', function () {
+        var url = $(this).attr("data-skip");
+        var title = $(this).text();
+        var id = $(this).attr("id").replace("menu-href", "");
+        tabContext.addTab({
             id: id,
-            text:title,
+            text: title,
             closeable: true,
             url: url
         });
     });
 
-    menuContext.bind("open:finish", function() {
-		setTimeout(function() {
-			$icon.addClass("is-active");
-		}, 100);
-	});
-	menuContext.bind("close:finish", function() {
-		setTimeout(function() {
-			$icon.removeClass("is-active");
-		}, 100);
-	});
-	
-	/**
-	 * 
-	 */
-	//单击次数
-	var click_cnt = 0;
-	//获取HTML
+    menuContext.bind("open:finish", function () {
+        setTimeout(function () {
+            $icon.addClass("is-active");
+        }, 100);
+    });
+    menuContext.bind("close:finish", function () {
+        setTimeout(function () {
+            $icon.removeClass("is-active");
+        }, 100);
+    });
+
+    /**
+     *
+     */
+        //单击次数
+    var click_cnt = 0;
+    //获取HTML
     var $html = document.getElementsByTagName("html")[0];
     //获取BODY
     var $body = document.getElementsByTagName("body")[0];
-    $html.onclick = function(e) {
-    	//创建动画元素
+    $html.onclick = function (e) {
+        //创建动画元素
         var $elem = document.createElement("b");
         $elem.style.color = "#ff6384";
         $elem.style.zIndex = 9999;
         $elem.style.position = "absolute";
         $elem.style.select = "none";
-        $elem.style.userSelect="none";
+        $elem.style.userSelect = "none";
         var x = e.pageX;
         var y = e.pageY;
         $elem.style.left = (x - 10) + "px";
@@ -170,7 +171,7 @@ $(document).ready(function() {
             case 105:
                 $elem.innerText = "(ꐦ°᷄д°᷅)";
                 //重置，循环
-                click_cnt=0;
+                click_cnt = 0;
                 break;
             default:
                 $elem.innerText = "❤";
@@ -180,9 +181,9 @@ $(document).ready(function() {
         $elem.style.fontSize = Math.random() * 10 + 8 + "px";
         var increase = 0;
         var anim;
-        setTimeout(function() {
-        	//往上漂浮
-            anim = setInterval(function() {
+        setTimeout(function () {
+            //往上漂浮
+            anim = setInterval(function () {
                 if (++increase == 150) {
                     clearInterval(anim);
                     $body.removeChild($elem);
@@ -196,11 +197,10 @@ $(document).ready(function() {
 })
 
 
-
-$(window).scroll(function() {
-	if($(".navbar").offset().top > 50) {
-		$(".navbar-fixed-top").addClass("top-nav");
-	} else {
-		$(".navbar-fixed-top").removeClass("top-nav");
-	}
+$(window).scroll(function () {
+    if ($(".navbar").offset().top > 50) {
+        $(".navbar-fixed-top").addClass("top-nav");
+    } else {
+        $(".navbar-fixed-top").removeClass("top-nav");
+    }
 })
