@@ -17,4 +17,6 @@ public interface ISysRmsService extends IService<SysRms> {
 
     public List<SysRms> getPermissionDataByFid(int fid);
 
+    public int saveAndReturnId(SysRms sysRms);
+
 }

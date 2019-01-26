@@ -21,4 +21,11 @@ public class BaseController {
         jsonObject.put("isSuccess",isSuccess);
         return JSONObject.toJSONString(jsonObject);
     }
+
+    public String success(){
+        Map jsonObject=new HashMap<String,Object>();
+        jsonObject.put("status",status);
+        jsonObject.put("isSuccess",isSuccess);
+        return JSONObject.toJSONString(jsonObject);
+    }
 }

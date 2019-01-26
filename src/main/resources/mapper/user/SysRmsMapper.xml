@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crsm.maker.user.mapper.SysRmsMapper">
+    <insert id="saveAndReturnId" useGeneratedKeys="true" keyProperty="id">
+     INSERT INTO `sys_rms` (
+          `rms_name`,
+          `rms_iocn`,
+          `rms_url`
+        )
+        VALUES
+          (
+            #{rmsName},
+            #{rmsIocn},
+            #{rmsUrl}
+          );
+    </insert>
 
     <select id="getPermissionDataByFid" resultType="com.crsm.maker.user.entity.SysRms">
       SELECT

@@ -1,6 +1,7 @@
 $(document).ready(function () {
     //当前ip(⊙o⊙)…
     homeContext = new Object();
+
     homeContext.hostname = window.location.hostname;
     $("#tabContainer").tabs({
         data: [{
@@ -61,11 +62,10 @@ $(document).ready(function () {
             type: "get",
             dataType: "json",
             success: function (result) {
-                console.log(result.isSuccess)
                 if (result.isSuccess) {
                     var data = result.data;
                     var structure = "<li id='menu-No{0}'><a href='{1}' data-skip='{2}' id='menu-href{3}'>{4}</a></li>";
-                    var fUl = "<ul>{0}</ul>";
+                    var fUl = "<ul id='{0}'>{1}</ul>";
                     for (var key in data) {
                         var content = structure.format(data[key].rmsId,
                             "javaScript:void(0)",
@@ -76,8 +76,13 @@ $(document).ready(function () {
                         if (data[key].fRmsId == 0) {
                             $("#menu-No" + data[key].fRmsId).find(".mm-listview").append(content);
                         } else {
-                            content = fUl.format(content);
-                            $("#menu-No" + data[key].fRmsId).append(content);
+                            if($("#menu-son{0}".format(data[key].fRmsId))[0]){
+                                $("#menu-son" + data[key].fRmsId).append(content);
+                            }else{
+                                content = fUl.format("menu-son"+data[key].fRmsId,content);
+                                $("#menu-No" + data[key].fRmsId).append(content);
+                            }
+
                         }
                         console.log(content)
                     }
@@ -124,9 +129,10 @@ $(document).ready(function () {
     var $body = document.getElementsByTagName("body")[0];
     $html.onclick = function (e) {
         //创建动画元素
-        var $elem = document.createElement("b");
+        var $elem = document.createElement("i");
         $elem.style.color = "#ff6384";
         $elem.style.zIndex = 9999;
+        //$elem.className="fab fa-alipay"
         $elem.style.position = "absolute";
         $elem.style.select = "none";
         $elem.style.userSelect = "none";

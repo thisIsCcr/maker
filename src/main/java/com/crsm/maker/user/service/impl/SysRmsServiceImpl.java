@@ -26,4 +26,9 @@ public class SysRmsServiceImpl extends ServiceImpl<SysRmsMapper, SysRms> impleme
     public List<SysRms> getPermissionDataByFid(int fid) {
         return sysRmsMapper.getPermissionDataByFid(fid);
     }
+
+    @Override
+    public int saveAndReturnId(SysRms sysRms) {
+        return sysRmsMapper.saveAndReturnId(sysRms);
+    }
 }

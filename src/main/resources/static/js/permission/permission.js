@@ -72,6 +72,8 @@ $(function () {
                 return tmp;
             },
             columns: [{
+                checkbox: true
+            }, {
                 field: 'id',
                 title: 'id',
                 align: "center"
@@ -103,44 +105,66 @@ $(function () {
                 ok: {
                     text: "保存",
                     action: function () {
-                        $.alert({
-                            text: "保存了",
-                            content: "未保存"
-                        })
+                        var addform = this.$content.find("#addform").data('bootstrapValidator')
+                        addform.validate();
+                        if (!addform.isValid()) {
+                            return false;
+                        }
+                        var data=this.$content.find("#addform").serialize();
+                        console.log(data)
+                        $.post("/rms/addPermission",data,function(result){
+                            console.log(result)
+                        },'json');
                     }
                 },
-                cancel: {}
+                cancel: {
+                    text: "取消",
+                    action: function () {
+
+                    }
+                }
             },
             onContentReady: function () {
                 var self = this;
-                var option = "<option value='{id}'>{roleName}</option>";
-                var optgroup='<optgroup label="{0}" id="{1}"></optgroup>'
                 //加载角色
                 $.ajax({
                     url: "/rms/getAllrole",
                     method: "get",
-                    dataType:"json",
+                    dataType: "json",
                     success: function (result) {
                         if (result.isSuccess) {
                             var DomOption = "";
-                            var rolelis=result.data;
+                            var option = "<option value='{id}'>{roleName}</option>";
+                            var rolelis = result.data;
                             for (key in rolelis) {
-                                console.log(rolelis[key])
                                 DomOption += option.format(rolelis[key])
                             }
                             self.$content.find("#role").append(DomOption)
                         }
                     }
                 })
+                //加载目录数据
                 $.ajax({
-                    url:"/getMenuData",
-                    method:"get",
-                    dataType:"json",
-                    success:function (result) {
-                        
+                    url: "/getMenuData",
+                    method: "get",
+                    dataType: "json",
+                    success: function (result) {
+                        if (result.isSuccess) {
+                            var DomOption = "";
+                            var option = "<option value='{0}'>{1}</option>";
+                            var menu = result.data;
+                            for (key in menu) {
+                                DomOption += option.format(menu[key].rmsId, menu[key].sysRms.rmsName)
+                            }
+                            self.$content.find("#uplevelMenu").append(DomOption)
+                        }
                     }
                 })
-
+                //初始化图标选择器
+                this.$content.find("#rmsIocn").iconpicker({
+                    placement:"top"
+                });
+                //初始化bootstrapValidator校验
                 this.$content.find("#addform").bootstrapValidator({
                     feedbackIcons: {
                         valid: 'glyphicon glyphicon-ok',
@@ -177,7 +201,7 @@ $(function () {
                                 }
                             }
                         },
-                        dataType: {
+                        type: {
                             message: "请选择类型",
                             validators: {
                                 notEmpty: {
@@ -207,7 +231,7 @@ $(function () {
         })
     }
 
-    $(document).on("click", "#toolbar>button", function () {
+    $("#toolbar>button").click(function () {
         var editContent = $(this).attr("id");
         switch (editContent) {
             case "btn_add":

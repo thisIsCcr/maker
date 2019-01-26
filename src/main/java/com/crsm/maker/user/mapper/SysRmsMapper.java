@@ -21,4 +21,6 @@ import java.util.List;
 public interface SysRmsMapper extends BaseMapper<SysRms> {
 
     public List<SysRms> getPermissionDataByFid(@Param("fid")int fid);
+
+    public int saveAndReturnId(SysRms sysRms);
 }
