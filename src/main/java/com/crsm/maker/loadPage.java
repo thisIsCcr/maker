@@ -20,7 +20,7 @@ public class loadPage {
         return "index";
     }
 
-    @RequestMapping("quartzJobList")
+    @RequestMapping("quartzPage")
     public String getQuratzJobListPage(){
         return "QuartzJobList";
     }

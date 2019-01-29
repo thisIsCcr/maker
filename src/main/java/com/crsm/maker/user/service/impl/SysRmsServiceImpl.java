@@ -6,6 +6,7 @@ import com.crsm.maker.user.mapper.SysRmsMapper;
 import com.crsm.maker.user.service.ISysRmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Ccr
  * @since 2019-01-14
  */
+@Transactional
 @Service
 public class SysRmsServiceImpl extends ServiceImpl<SysRmsMapper, SysRms> implements ISysRmsService {
 

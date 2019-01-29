@@ -110,11 +110,11 @@ $(function () {
                         if (!addform.isValid()) {
                             return false;
                         }
-                        var data=this.$content.find("#addform").serialize();
+                        var data = this.$content.find("#addform").serialize();
                         console.log(data)
-                        $.post("/rms/addPermission",data,function(result){
+                        $.post("/rms/addPermission", data, function (result) {
                             console.log(result)
-                        },'json');
+                        }, 'json');
                     }
                 },
                 cancel: {
@@ -162,7 +162,7 @@ $(function () {
                 })
                 //初始化图标选择器
                 this.$content.find("#rmsIocn").iconpicker({
-                    placement:"top"
+                    placement: "bottom"
                 });
                 //初始化bootstrapValidator校验
                 this.$content.find("#addform").bootstrapValidator({
@@ -231,11 +231,35 @@ $(function () {
         })
     }
 
+    obutton.removePermission = function () {
+        var getSelections = $("table").bootstrapTable("getSelections")
+        console.log(getSelections)
+        if (getSelections.length <= 0) {
+            $.dialog({
+                title: "警告",
+                content: "请选择需要操作的行"
+            })
+            return false;
+        }
+        $.get("/rms/delePermission/{0}".format(getSelections[0].id),function(result){
+           if(result.isSucces){
+                $.alert({
+                    title:"提示",
+                    contetn:"删除成功"
+                })
+           }
+        },"json")
+    }
+
+
     $("#toolbar>button").click(function () {
         var editContent = $(this).attr("id");
         switch (editContent) {
             case "btn_add":
                 obutton.addAuthenaction()
+                break;
+            case "btn_delete":
+                obutton.removePermission()
                 break;
             default:
                 $.alert({

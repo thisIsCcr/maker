@@ -2,6 +2,7 @@ package com.crsm.maker.user.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.crsm.maker.base.BaseController;
 import com.crsm.maker.user.entity.RoleRms;
 import com.crsm.maker.user.entity.SysRms;
@@ -107,6 +108,18 @@ public class SysRmsController extends BaseController {
         roleRms.setRoleId(roleId);
         iRoleRmsService.save(roleRms);
         return success();
+    }
+
+
+    @RequestMapping(value = "delePermission/{id}",method = RequestMethod.GET)
+    public String delePermission(@PathVariable("id")Integer id){
+        boolean deleTree=iSysTreeService.remove(new UpdateWrapper<SysTree>().eq("rms_id",id).or().eq("f_rms_id",id));
+        boolean rmOuterKeyTable=iRoleRmsService.remove(new UpdateWrapper<RoleRms>().eq("rms_id",id));
+        boolean delData=iSysRmsService.removeById(id);
+        if(deleTree && rmOuterKeyTable && delData){
+            return success();
+        }
+        return fail();
     }
 
 
