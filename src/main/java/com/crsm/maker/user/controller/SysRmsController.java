@@ -111,6 +111,11 @@ public class SysRmsController extends BaseController {
     }
 
 
+    /**
+     * 删除权限，（单个
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "delePermission/{id}",method = RequestMethod.GET)
     public String delePermission(@PathVariable("id")Integer id){
         boolean deleTree=iSysTreeService.remove(new UpdateWrapper<SysTree>().eq("rms_id",id).or().eq("f_rms_id",id));

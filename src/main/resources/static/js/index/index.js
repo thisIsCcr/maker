@@ -1,4 +1,4 @@
-$(function() {
+$(document).ready(function() {
 	$('#table').bootstrapTable({
 		url: "/getAllUser",
 		cache: false,
@@ -68,6 +68,6 @@ $(function() {
 		});
 	}, 1300)
 
-	
+
 
 })

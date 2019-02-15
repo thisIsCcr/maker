@@ -1,16 +1,16 @@
 <link href="static/css/index/index.css" rel="stylesheet" />
-<script type="text/javascript" src="static/js/index/index.js"></script>
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-lg-5 Icell ">
+		<div class="col-lg-3 Icell ">
 			<form method="post" action="/multipartFile" enctype="multipart/form-data">
 				<input type="text" name="name" value="Ccr"/>
 				<input type="file" name="file"/>
 				<input type="submit" value="提交"/>
 			</form>
 		</div>
+
 		<!--日志信息-->
-		<div class="col-lg-3 Icell col-lg-offset-4">
+		<div class="col-lg-4 Icell col-lg-offset-5">
 			<dl>
 				<dt><p class="text-left"><img src="static/img/QQ图片20181218162911.gif" class="img-rounded sysInfo-img" height="50px" width="50px"/></p></dt>
 				<dt><p class="text-right">版本信息</p></dt>
@@ -32,6 +32,20 @@
 				</dd>
 			</dl>
 		</div>
+
+		<script>
+            var piCameraSwitch=function(optionType){
+                $.get("/piControl/piCameraSwitch/{0}".format(optionType),function(result){
+                    console.log(result)
+                },"json")
+            }
+		</script>
+		<div class="col-lg-2 Icell ">
+			<h4>树莓派相机开关控制</h4>
+			<input type="button" value="开启" onclick="piCameraSwitch(1)"/>
+			<input type="button" value="关闭" onclick="piCameraSwitch(0)"/>
+		</div>
+
 	</div>
 	<!--CPU使用率-->
 	<div class="row">
@@ -56,3 +70,4 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript" src="static/js/index/index.js"></script>

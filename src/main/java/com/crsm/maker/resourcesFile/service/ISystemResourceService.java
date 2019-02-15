@@ -1,7 +1,9 @@
 package com.crsm.maker.resourcesFile.service;
 
-import com.crsm.maker.resourcesFile.entity.SysResource;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.crsm.maker.resourcesFile.entity.SysResource;
 
 /**
  * <p>
@@ -12,5 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2018-12-25
  */
 public interface ISystemResourceService extends IService<SysResource> {
-
+        public IPage<SysResource> selectPageVo(Page<SysResource> page,SysResource sysResource);
 }

@@ -2,4 +2,27 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crsm.maker.resourcesFile.mapper.SystemResourceMapper">
 
+
+    <select id="selectPageVo" resultType="com.crsm.maker.resourcesFile.entity.SysResource">
+           SELECT * FROM `sys_resource`
+           <where>
+               1=1
+              <if test="sysSue.resType!=null">
+                  AND res_type=#{sysSue.resType}
+              </if>
+              <if test="sysSue.userId!=null">
+                  AND user_id=#{sysSue.userId}
+              </if>
+              <if test="sysSue.resName!=null">
+                  AND res_name=#{sysSue.resName}
+              </if>
+              <if test="sysSue.resCreateTime!=null">
+                  AND res_createTime=#{sysSue.resCreatetime}
+              </if>
+               <if test="sysSue.resIsStop!=null">
+                  AND res_isStop=#{sysSue.resIsstop}
+               </if>
+           </where>
+                ORDER BY id DESC
+    </select>
 </mapper>

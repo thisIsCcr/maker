@@ -1,6 +1,10 @@
 package com.crsm.maker;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.crsm.maker.mail.OrderManager;
+import com.crsm.maker.resourcesFile.entity.SysResource;
+import com.crsm.maker.resourcesFile.service.ISystemResourceService;
 import com.crsm.maker.user.entity.SysTree;
 import com.crsm.maker.user.mapper.SysTreeMapper;
 import org.junit.Test;
@@ -25,6 +29,9 @@ public class MailServiceTest {
     @Autowired
     SysTreeMapper sysTreeMapper;
 
+    @Autowired
+    ISystemResourceService iSystemResourceService;
+
     @Test
     public void mapper(){
         List<SysTree> lis=sysTreeMapper.getMenuData();
@@ -32,6 +39,15 @@ public class MailServiceTest {
             System.out.println(item.toString());
         }
     }
+
+    @Test
+    public void testPage(){
+        Page<SysResource> page=new Page<>(1,10);
+        SysResource sysResource=new SysResource();
+        sysResource.setUserId(1);
+        IPage<SysResource> iPage= iSystemResourceService.selectPageVo(page,sysResource);
+    }
+
 
     /*@Test
     public void testSimpleMail() throws Exception {

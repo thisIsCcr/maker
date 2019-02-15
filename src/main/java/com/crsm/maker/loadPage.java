@@ -22,11 +22,16 @@ public class loadPage {
 
     @RequestMapping("quartzPage")
     public String getQuratzJobListPage(){
-        return "QuartzJobList";
+        return "quartzJobList";
     }
 
     @RequestMapping("permission")
     public String getPermissionPage(){
         return "permission";
+    }
+
+    @RequestMapping("fileResource")
+    public String getresourceFilePage(){
+        return "fileResource";
     }
 }
