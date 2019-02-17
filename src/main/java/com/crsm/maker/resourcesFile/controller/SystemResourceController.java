@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
  */
 @Slf4j
 @RestController
+@RequestMapping("/file")
 public class SystemResourceController extends BaseController {
 
     @Autowired
@@ -63,7 +64,7 @@ public class SystemResourceController extends BaseController {
         if(!fileData.exists()){
             fileData.mkdirs();
         }
-        filePath+=fileName;
+        filePath=filePath+fileName;
         SysResource sResource=new SysResource();
         sResource.setResName(fileName);
         sResource.setResType(1);
@@ -73,7 +74,7 @@ public class SystemResourceController extends BaseController {
         sResource.setResPath(filePath);
         iSystemResourceService.save(sResource);
         try {
-            FileOutputStream fileOutputStream=new FileOutputStream(filePath+fileName);
+            FileOutputStream fileOutputStream=new FileOutputStream(filePath);
             fileOutputStream.write(file.getBytes());
             fileOutputStream.flush();
             fileOutputStream.close();
@@ -94,5 +95,4 @@ public class SystemResourceController extends BaseController {
         IPage<SysResource> iPage= iSystemResourceService.selectPageVo(page,sysResource);
         return success(iPage);
     }
-
 }
