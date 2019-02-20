@@ -1,16 +1,16 @@
 <link href="static/css/index/index.css" rel="stylesheet" />
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-lg-3 Icell ">
-			<form method="post" action="/file/multipartFile" enctype="multipart/form-data">
-				<input type="text" name="name" value="Ccr"/>
-				<input type="file" name="file"/>
-				<input type="submit" value="提交"/>
-			</form>
+		<div class="col-lg-6 Icell ">
+			<!--<form method="post" action="/file/multipartFile" enctype="multipart/form-data">
+				<input type="text" name="name" value="Ccr" style="display: none;"/>
+
+			</form>-->
+			<input type="file" id="uploadFile" name="file" class="file-loading" multiple/>
 		</div>
 
 		<!--日志信息-->
-		<div class="col-lg-4 Icell col-lg-offset-5">
+		<div class="col-lg-4 Icell col-lg-offset-2">
 			<dl>
 				<dt><p class="text-left"><img src="static/img/QQ图片20181218162911.gif" class="img-rounded sysInfo-img" height="50px" width="50px"/></p></dt>
 				<dt><p class="text-right">版本信息</p></dt>
@@ -40,10 +40,10 @@
                 },"json")
             }
 		</script>
-		<div class="col-lg-2 Icell ">
+		<div class="col-lg-2 Icell col-lg-offset-10">
 			<h4>树莓派相机开关控制</h4>
-			<input type="button" value="开启" onclick="piCameraSwitch(1)"/>
-			<input type="button" value="关闭" onclick="piCameraSwitch(0)"/>
+			<input type="button" class="btn btn-success" value="开启" onclick="piCameraSwitch(1)"/>
+			<input type="button" class="btn btn-danger" value="关闭" onclick="piCameraSwitch(0)"/>
 		</div>
 
 	</div>

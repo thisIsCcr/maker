@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.crsm.maker.base.BaseController;
+import com.crsm.maker.base.ResultStatusCodeEnum;
 import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.crsm.maker.resourcesFile.service.ISystemResourceService;
 import com.crsm.maker.user.entity.SysUser;
@@ -45,20 +46,24 @@ public class SystemResourceController extends BaseController {
      * 文件上传（单个
      * @param request
      * @param file
-     * @param name
+     * @param
      * @return
      * @throws IOException
      */
     @RequestMapping("/multipartFile")
-    public Object multiUplod(HttpServletRequest request,@RequestParam("file")MultipartFile file,@RequestParam("name")String name) throws IOException {
-        SysUser  user=iSysUserService.getOne(new QueryWrapper<SysUser>().eq("usr_name",name));
-        log.info("上传人员：{}",name);
+    public Object multiUplod(HttpServletRequest request,@RequestParam("file")MultipartFile file) throws IOException {
+        SysUser  user=iSysUserService.getOne(new QueryWrapper<SysUser>().eq("usr_name","Ccr"));
+        log.info("上传人员：{}",user.getUsrName());
         if(file.isEmpty()){
             log.warn("未获取文件");
             return "文件上传失败";
         }
         String upuserName="upFile";
         String fileName=file.getOriginalFilename();
+        int isExist=iSystemResourceService.count(new QueryWrapper<SysResource>().eq("res_name",fileName));
+        if(isExist>0){
+            return fail(ResultStatusCodeEnum.REPEAT_DATA_ERROR);
+        }
         String filePath=upuserName+"/";
         File fileData=new File(filePath);
         if(!fileData.exists()){
@@ -90,7 +95,7 @@ public class SystemResourceController extends BaseController {
 
     @RequestMapping(value = "getResourceFileInfo",method = RequestMethod.GET)
     public String getResourceFileInfo(){
-        Page<SysResource> page=new Page<>(1,5);
+        Page<SysResource> page=new Page<>(1,10);
         SysResource sysResource=new SysResource();
         IPage<SysResource> iPage= iSystemResourceService.selectPageVo(page,sysResource);
         return success(iPage);

@@ -52,7 +52,15 @@ $(document).ready(function() {
 		}]
 	});
 
-	setInterval(function() {
+	$("#uploadFile").fileinput({
+        language: 'zh',//中文
+		maxFileCount:10,//最大同时上传个数
+        uploadUrl:"/file/multipartFile",//文件上传地址
+		enctype:"multipart/form-data"//编码格式
+	});
+
+	//cpu使用率监控
+	/*setInterval(function() {
 		$.ajax({
 			type: "get",
 			url: "/actuator/metrics/system.cpu.usage",
@@ -66,7 +74,7 @@ $(document).ready(function() {
 				$usager.css("width",usage+"%")
 			}
 		});
-	}, 1300)
+	}, 1300)*/
 
 
 

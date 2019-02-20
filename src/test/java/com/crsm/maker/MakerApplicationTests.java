@@ -1,23 +1,13 @@
 package com.crsm.maker;
 
-import com.alibaba.fastjson.JSONObject;
-import com.crsm.maker.rabbitmq.HelloSender;
-import com.crsm.maker.user.entity.SysRms;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
+/*@RunWith(SpringRunner.class)
+@SpringBootTest*/
 public class MakerApplicationTests {
 
-    @Autowired
+    /*@Autowired
     AmqpTemplate template;
 
     @Test
@@ -29,6 +19,17 @@ public class MakerApplicationTests {
         String jsonObject=JSONObject.toJSONString(map);
         System.out.println(jsonObject);
         template.convertAndSend("pi",jsonObject);
+    }*/
+
+    public static void main(String[] args){
+           while (true){
+               try {
+                   Thread.sleep(1000);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd hh:mm:ss")));
+           }
     }
 
 }
