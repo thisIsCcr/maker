@@ -73,10 +73,10 @@
             //如果可关闭,插入关闭图标，并绑定关闭事件
             if (data[i].closeable) {
                 var ul_li_close = $(this.template.ul_li_close);
-				
+
 				ul_li.find("a").append("&nbsp;");
                 ul_li.find("a").append(ul_li_close);
-                
+
             }
 
             ul_nav.append(ul_li);
@@ -144,6 +144,11 @@
     //新增一个tab页
     BaseTab.prototype.addTab=function (obj) {
         var self=this;
+        if(this.$element.find(".nav-tabs li a[href='#{0}']".format(obj.id))[0]){
+            this.$element.find(".nav-tabs a[href='#" + obj.id + "']").tab("show");
+            return false;
+        }
+
         //nav-tab
         var ul_li = $(this.template.ul_li.format(obj.id, obj.text));
         //如果可关闭,插入关闭图标，并绑定关闭事件
@@ -152,26 +157,22 @@
             ul_li.find("a").append("&nbsp;");
             ul_li.find("a").append(ul_li_close);
         }
-        
         this.$element.find(".nav-tabs:eq(0)").append(ul_li);
         //div-content
         var div_content_panel = $(this.template.div_content_panel.format(obj.id));
         this.$element.find(".tab-content:eq(0)").append(div_content_panel);
         $("#" + obj.id).load(obj.url,obj.paramter);
         this.stateObj[obj.id] = true;
-
         if(obj.closeable){
             this.$element.find(".nav-tabs li a[href='#" + obj.id + "'] i.glyphicon-remove").click(function () {
                 var href = $(this).parents("a").attr("href").substring(1);
-                if(self.getCurrentTabId()==href){
-                    self.$element.find(".nav-tabs li:eq(0) a").tab("show");
-                }
-                $(this).parents("li").remove();
+                var nextIndex=self.$element.find(".nav-tabs li a[href='#{0}']".format(href)).parent().index();
+                console.log(nextIndex)
                 $("#" + href).remove();
-                
+                $(this).parents("li").remove();
+                self.$element.find(".nav-tabs li:eq({0}) a".format(nextIndex-1)).tab("show");
             })
         }
-
         this.$element.find(".nav-tabs a[href='#" + obj.id + "']").tab("show");
     }
 
@@ -179,14 +180,14 @@
     BaseTab.prototype.find=function (tabId) {
         return this.$element.find(".nav-tabs li a[href='#" + tabId + "']").text();
     }
-    
+
     // 删除活动页
     BaseTab.prototype.remove=function (tabId) {
     	var self=this;
         $("#" + tabId).remove();
         this.$element.find(".nav-tabs li a[href='#" + tabId + "']").parents("li").remove();
     }
-    
+
     // 重新加载页面
     BaseTab.prototype.reload=function (obj) {
     	var self=this;
