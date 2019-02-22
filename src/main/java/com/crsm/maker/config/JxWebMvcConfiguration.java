@@ -8,9 +8,11 @@ import org.springframework.web.filter.CorsFilter;
 
 /**
  * creat by Ccr on 2018/12/12
+ * 跨域请求
  **/
 @Configuration
 public class JxWebMvcConfiguration {
+
     private CorsConfiguration buildConfig() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOrigin("*");

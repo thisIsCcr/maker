@@ -1,49 +1,96 @@
 <style type="text/css">
-    #container {
-        border: 1px solid red;
-        margin: 15px;
+    #container_img {
+        width: 95%;
+        margin: auto;
     }
 
     .item {
-        background: rgb(135, 199, 135);
-        width: 250px;
+        width: 300px;
+        overflow: hidden; /*溢出内元素进行隐藏策略*/
+        cursor: pointer; /*鼠标状态*/
     }
 
     .item img {
         margin: 0px;
         padding: 0px;
         display: block;
+        position: relative;
+    }
+
+    .item-lable {
+        position: absolute;
+        bottom: -40px;
+        width: 100%;
+        height: 40px;
+        background: #e95a44;
     }
 </style>
-<div class="row">
-    <div class="col-lg-12 ">
-        <div id="container_img"></div>
-    </div>
-</div>
+<div id="container_img" class="text-center"></div>
 <script>
     $(function () {
-        $.get('/file/getResourceFileInfo', function (result) {
-            var imgdata = result.data.records;
-            var loadData,
-                template = "<div class='item'><img src='http://47.98.124.87/usr/maker/upFile/{0}' width='100%'/></div>";
-            for (key in imgdata) {
-                wall.appendBlock(template.format(imgdata[key].resName));
-            }
-            console.log(loadData)
-        }, 'json')
 
-        var wall = new Freewall("#container_img");
-        wall.reset({
-            selector: '.item',
-            animate: true,
-            cellW: 250,
-            cellH: 'auto',
-            onResize: function () {
+        $icon.click(function () {
+            setTimeout(function () {
                 wall.fitWidth();
+            }, 500)
+        })
+
+        var fileContext = {
+            init: function () {
+                wall = new Freewall("#container_img");
+                wall.reset({
+                    selector: '.item',
+                    animate: true,
+                    cellW: 300,
+                    delay: 50,
+                    cellH: 'auto',
+                    onResize: function () {
+                        wall.fitWidth();
+                    }
+                });
+                wall.fitWidth()
+            },
+            registerLoadEvent: function () {
+                console.log($('.item img'))
+                $('.item img').onload(function () {
+                    wall.fitWidth();
+                });
+            },
+            getDateAndLoad: function () {
+                fileContext.init();
+                $.get('/file/getResourceFileInfo', function (result) {
+                    var imgdata = result.data.records;
+                    var intactData
+                        , template =
+                        "<div class='item' id='file_item_{0}'><img class=\"img-rounded\" src='http://47.98.124.87/usr/maker/upFile/{1}' width='100%'/><div class='item-lable'>创建时间：{2}</div></div>";
+                    /*for (key in imgdata) {
+                        intactData += template.format(imgdata[key].id, imgdata[key].resName, imgdata[key].resCreatetime);
+                    }*/
+                    //循环创建setTime模拟休眠 进行延迟加载
+                    for (key in imgdata) {
+                        (function (key) {
+                            setTimeout(function () {
+                                wall.prepend(template.format(imgdata[key].id, imgdata[key].resName, imgdata[key].resCreatetime));
+                                wall.fitWidth();
+                            }, key * 1100)
+                        })(key)
+                    }
+                }, 'json')
             }
-        });
-        /*wall.container.find('.item img').load(function() {
-            wall.fitWidth();
-        });*/
+        }
+        fileContext.getDateAndLoad();
+
+
+        $(document).on("mouseover mouseout", ".item", function (event) {
+            if (event.type == "mouseover") {
+                $(this).find('.item-lable').stop().animate({bottom: 0}, 200, 'easeOutQuad');
+                $(this).find('img').stop().animate({top: -30}, 500, 'easeOutQuad');
+            } else if (event.type == "mouseout") {
+                $(this).find('.item-lable').stop().animate({bottom: -40}, 200, 'easeInQuad');
+                $(this).find('img').stop().animate({top: 0}, 300, 'easeOutQuad');
+            }
+        })
+
+
     });
 </script>

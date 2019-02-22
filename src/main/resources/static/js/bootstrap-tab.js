@@ -167,7 +167,6 @@
             this.$element.find(".nav-tabs li a[href='#" + obj.id + "'] i.glyphicon-remove").click(function () {
                 var href = $(this).parents("a").attr("href").substring(1);
                 var nextIndex=self.$element.find(".nav-tabs li a[href='#{0}']".format(href)).parent().index();
-                console.log(nextIndex)
                 $("#" + href).remove();
                 $(this).parents("li").remove();
                 self.$element.find(".nav-tabs li:eq({0}) a".format(nextIndex-1)).tab("show");
