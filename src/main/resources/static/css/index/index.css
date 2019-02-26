@@ -2,15 +2,3 @@
 	position: absolute;
 	top: 20px;
 }
-.Icell {
-	/*margin: top right bottom left*/
-	/*margin: 9px 9px 9px 9px;*/
-	margin-top: 9px;
-	margin-bottom: 9px;
-	background: #fff;
-	color: #333;
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#909090, direction=120, strength=4);
-	-moz-box-shadow: 1px 1px 10px #909090;
-	-webkit-box-shadow: 1px 1px 10px #909090;
-	box-shadow: 1px 1px 10px #909090;
-}

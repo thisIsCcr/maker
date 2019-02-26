@@ -2,7 +2,7 @@
 <div class="container-fluid">
     <div class="row">
         <!--日志信息-->
-        <div class="col-lg-3 Icell ">
+        <div class="col-lg-3 Icell Loadanimation">
             <dl>
                 <dt><p class="text-left"><img src="static/img/QQ图片20181218162911.gif" class="img-rounded sysInfo-img"
                                               height="50px" width="50px"/></p></dt>
@@ -26,7 +26,7 @@
             </dl>
         </div>
 
-        <div class="col-lg-6 Icell col-lg-offset-3">
+        <div class="col-lg-6 Icell col-lg-offset-3 Loadanimation">
             <input type="file" id="uploadFile" name="file" class="file-loading" multiple/>
         </div>
 
@@ -37,7 +37,7 @@
                 }, "json")
             }
         </script>
-        <div class="col-lg-2 Icell col-lg-offset-10">
+        <div class="col-lg-2 Icell col-lg-offset-10 Loadanimation">
             <div class="text-center">
                 <h4>树莓派相机开关&nbsp;<small>raspberry pie</small>
                 </h4>
@@ -49,14 +49,14 @@
     </div>
     <!--CPU使用率-->
     <div class="row">
-        <div class="col-lg-5 col-lg-offset-7 Icell">
+        <div class="col-lg-5 col-lg-offset-7 Icell Loadanimation">
             <dl>
                 <dt>
                     <h4 id="CPUusager">0%</h4>
                 </dt>
                 <dd>
                     <div class="progress" style="height: 10px;">
-                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60"
+                        <div id="usager" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60"
                              aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
 
                         </div>
@@ -66,7 +66,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-5 col-lg-offset-7 Icell">
+        <div class="col-lg-5 col-lg-offset-7 Icell Loadanimation">
             <table id="table"></table>
         </div>
     </div>

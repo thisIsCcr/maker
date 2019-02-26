@@ -59,6 +59,7 @@ $(document).ready(function() {
 		enctype:"multipart/form-data"//编码格式
 	});
 
+    var $usager=$("#usager");
 	//cpu使用率监控
 	setInterval(function() {
 		$.ajax({
@@ -66,9 +67,7 @@ $(document).ready(function() {
 			url: "/actuator/metrics/system.cpu.usage",
 			async: true,
 			success: function(result) {
-				var $usager=$(".progress-bar");
 				var usage=parseInt((result.measurements[0].value * 100));
-				var $progress=$(".progress");
 				$("#CPUusager").html(usage+"%");
 				$usager.prop("aria-valuenow",usage);
 				$usager.css("width",usage+"%")

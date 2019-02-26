@@ -7,6 +7,21 @@ body {
 	background-attachment: fixed;*/
 }
 
+.Icell {
+	/*margin: top right bottom left*/
+	/*margin: 9px 9px 9px 9px;*/
+	margin-top: 10px;
+	margin-bottom: 9px;
+	background: #fff;
+	color: #333;
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#909090, direction=120, strength=4);
+	-moz-box-shadow: 1px 1px 10px #909090;
+	-webkit-box-shadow: 1px 1px 10px #909090;
+	box-shadow: 1px 1px 10px #909090;
+}
+
+
+
 .mm-menu {
 	/*--mm-color-background: #28A4C9;*/
 	/*--mm-sidebar-expanded-size:700px;*/
@@ -46,7 +61,7 @@ button.navbar-toggle {
 	background-color: #fbfbfb;
 }
 
-*/
+
 /*整个背景都是transparent透明的，会看不到，所以再次覆盖一下*/
 
 button.navbar-toggle>span.icon-bar {
@@ -54,5 +69,17 @@ button.navbar-toggle>span.icon-bar {
 }
 
 #tabContainer {
-	z-index: 9999px;
+	z-index: 9999;
 }
+
+@-webkit-keyframes myfirst {
+	0%{margin-top: -50px}
+	100%{margin-top:10px}
+}
+
+.Loadanimation{
+	margin-top: 10px;
+	margin-bottom: 9px;
+	-webkit-animation: myfirst 1s;
+}
+
