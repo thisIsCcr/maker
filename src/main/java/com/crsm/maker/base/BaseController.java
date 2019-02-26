@@ -1,7 +1,6 @@
 package com.crsm.maker.base;
 
 import com.alibaba.fastjson.JSONObject;
-import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
