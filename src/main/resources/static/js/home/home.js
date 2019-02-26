@@ -44,8 +44,10 @@ $(document).ready(function () {
         }
     })
 
+
+
     //设置展开动画
-    var $icon = $("#my-icon");
+    $icon = $("#my-icon");
     menuContext = $menu.data("mmenu");
     //打开关闭
     $icon.on("click", function () {
@@ -76,10 +78,10 @@ $(document).ready(function () {
                         if (data[key].fRmsId == 0) {
                             $("#menu-No" + data[key].fRmsId).find(".mm-listview").append(content);
                         } else {
-                            if($("#menu-son{0}".format(data[key].fRmsId))[0]){
+                            if ($("#menu-son{0}".format(data[key].fRmsId))[0]) {
                                 $("#menu-son" + data[key].fRmsId).append(content);
-                            }else{
-                                content = fUl.format("menu-son"+data[key].fRmsId,content);
+                            } else {
+                                content = fUl.format("menu-son" + data[key].fRmsId, content);
                                 $("#menu-No" + data[key].fRmsId).append(content);
                             }
 
@@ -99,6 +101,13 @@ $(document).ready(function () {
         var url = $(this).attr("data-skip");
         var title = $(this).text();
         var id = $(this).attr("id").replace("menu-href", "");
+        if(url=="/"){
+            $.alert({
+                title:"警告",
+                content:"为指定路径∑"
+            })
+            return false;
+        }
         tabContext.addTab({
             id: id,
             text: title,
@@ -107,11 +116,17 @@ $(document).ready(function () {
         });
     });
 
+    /**
+     * 打开侧边栏
+     */
     menuContext.bind("open:finish", function () {
         setTimeout(function () {
             $icon.addClass("is-active");
         }, 100);
     });
+    /**
+     * 关闭侧边栏
+     */
     menuContext.bind("close:finish", function () {
         setTimeout(function () {
             $icon.removeClass("is-active");

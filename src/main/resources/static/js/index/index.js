@@ -52,15 +52,22 @@ $(document).ready(function() {
 		}]
 	});
 
+	$("#uploadFile").fileinput({
+        language: 'zh',//中文
+		maxFileCount:10,//最大同时上传个数
+        uploadUrl:"/file/multipartFile",//文件上传地址
+		enctype:"multipart/form-data"//编码格式
+	});
+
+    var $usager=$("#usager");
+	//cpu使用率监控
 	setInterval(function() {
 		$.ajax({
 			type: "get",
 			url: "/actuator/metrics/system.cpu.usage",
 			async: true,
 			success: function(result) {
-				var $usager=$(".progress-bar");
 				var usage=parseInt((result.measurements[0].value * 100));
-				var $progress=$(".progress");
 				$("#CPUusager").html(usage+"%");
 				$usager.prop("aria-valuenow",usage);
 				$usager.css("width",usage+"%")

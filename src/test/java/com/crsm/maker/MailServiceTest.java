@@ -40,6 +40,8 @@ public class MailServiceTest {
         }
     }
 
+
+
     @Test
     public void testPage(){
         Page<SysResource> page=new Page<>(1,10);
