@@ -1,6 +1,61 @@
+<script>
+    $(function () {
+        $("#jobList").bootstrapTable({
+           url:"/job/list",
+           responseHandler:function (res) {
+               console.log(res.data)
+               return res.data;
+           },
+           columns:[{
+               checkbox:true
+           },{
+               field:"jobId",
+               title:"id",
+               align:"center"
+           },{
+               field:"jobName",
+               title:"名称",
+               align:"center"
+           },{
+               field:"jobGroup",
+               title:"jobGroup",
+               align:"center"
+           },{
+               field:"triggerName",
+               title:"triggerName",
+               align:"center"
+           },{
+               field:"triggerGroupName",
+               title:"triggerGroupName",
+               align:"center"
+           },{
+               field:"jobStatus",
+               title:"状态",
+               align:"center"
+           },{
+               field:"nextFireTime",
+               title:"下次运行时间",
+               align:"center"
+           },{
+               field:"previousFireTime",
+               title:"上次运行时间",
+               align:"center"
+           },{
+               field:"runTimes",
+               title:"运行时间",
+               align:"center"
+           },{
+               field:"startTime",
+               title:"开始时间",
+               align:"center"
+           }]
+        })
+    })
+
+</script>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-12 Icell">
+        <div class="col-lg-12 Icell Loadanimation">
             <div id="quartz_toolbar" class="btn-group">
                 <button id="btn_add" type="button" class="btn btn-default">
                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增

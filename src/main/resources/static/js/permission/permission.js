@@ -1,6 +1,6 @@
 $(function () {
-    obutton = new Object();
-    botsTable = $('#rsm-table');
+    var obutton = new Object();
+    var botsTable = $('#rsm-table');
     botsTable.bootstrapTable({
         url: "/rms/getAllrmsData",
         cache: false, //禁用缓存
