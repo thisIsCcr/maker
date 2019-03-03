@@ -61,7 +61,7 @@ $(document).ready(function() {
 
     var $usager=$("#usager");
 	//cpu使用率监控
-	setInterval(function() {
+	/*setInterval(function() {
 		$.ajax({
 			type: "get",
 			url: "/actuator/metrics/system.cpu.usage",
@@ -73,7 +73,7 @@ $(document).ready(function() {
 				$usager.css("width",usage+"%")
 			}
 		});
-	}, 1300)
+	}, 1300)*/
 
 
 

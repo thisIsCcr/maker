@@ -111,9 +111,8 @@ $(function () {
                             return false;
                         }
                         var data = this.$content.find("#addform").serialize();
-                        console.log(data)
                         $.post("/rms/addPermission", data, function (result) {
-                            console.log(result)
+                            baseHome.successPrompt(result.msg)
                         }, 'json');
                     }
                 },
@@ -233,26 +232,17 @@ $(function () {
 
     obutton.removePermission = function () {
         var getSelections = $("table").bootstrapTable("getSelections")
-        console.log(getSelections)
         if (getSelections.length <= 0) {
-            $.dialog({
-                title: "警告",
-                content: "请选择需要操作的行"
-            })
+            baseHome.warningPrompt("请选择需要操作的行");
             return false;
         }
         $.get("/rms/delePermission/{0}".format(getSelections[0].id),function(result){
-           if(result.isSucces){
-                $.alert({
-                    title:"提示",
-                    contetn:"删除成功"
-                })
-           }
+           baseHome.successPrompt(result.msg);
         },"json")
     }
 
 
-    $("#toolbar>button").click(function () {
+    $("#toolbar_permission>button").click(function () {
         var editContent = $(this).attr("id");
         switch (editContent) {
             case "btn_add":

@@ -1,13 +1,74 @@
 $(document).ready(function () {
-    //当前ip(⊙o⊙)…
-    homeContext = new Object();
 
-    homeContext.hostname = window.location.hostname;
+    baseHome = new Object();
+
+    baseHome = {
+        hostname: window.location.hostname,
+        iconSwitch: $("#my-icon"),
+        promptTitle: "信息",
+        successPrompt: function () {
+            if (arguments.length == 0) {
+                console.error("Error! params not norm")
+                return;
+            }
+            toastr.success(arguments[0], this.promptTitle)
+        },
+        errorPrompt: function () {
+            if (arguments.length == 0) {
+                console.error("Error! params not norm")
+                return;
+            }
+            toastr.error(arguments[0], this.promptTitle)
+        },
+        warningPrompt: function () {
+            if (arguments.length == 0) {
+                console.error("Error! params not norm")
+                return;
+            }
+            toastr.warning(arguments[0], this.promptTitle)
+        }
+    }
+
+    var socket=new WebSocket("ws://localhost:10010/websocket")
+    if(!window.WebSocket){
+
+    }
+
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+
+    /*baseHome.toastrPrompt=function(){
+        if(arguments.length==0 ){
+            console.error("Error! params not norm")
+            return;
+        }
+        var promptType="success";
+        for (key in arguments){
+            if(typeof arguments[key]=="String"){
+
+            }
+        }
+    }*/
+
     $("#tabContainer").tabs({
         data: [{
             id: 'index',
             text: '首页',
-            url: "index"
+            url: "index".format()
         }],
         showIndex: 0,
         loadAll: true
@@ -45,13 +106,10 @@ $(document).ready(function () {
     })
 
 
-
-    //设置展开动画
-    $icon = $("#my-icon");
     menuContext = $menu.data("mmenu");
     //打开关闭
-    $icon.on("click", function () {
-        if ($icon.hasClass("is-active")) {
+    baseHome.iconSwitch.on("click", function () {
+        if ($(this).hasClass("is-active")) {
             menuContext.close();
         } else {
             menuContext.open()
@@ -101,12 +159,9 @@ $(document).ready(function () {
         var url = $(this).attr("data-skip");
         var title = $(this).text();
         var id = $(this).attr("id").replace("menu-href", "");
-        if(url=="/"){
-            $.alert({
-                title:"警告",
-                content:"为指定路径∑"
-            })
-            return false;
+        if (url == "/") {
+            baseHome.warningPrompt("未指定路径∑");
+            return;
         }
         tabContext.addTab({
             id: id,
@@ -121,7 +176,7 @@ $(document).ready(function () {
      */
     menuContext.bind("open:finish", function () {
         setTimeout(function () {
-            $icon.addClass("is-active");
+            baseHome.iconSwitch.addClass("is-active");
         }, 100);
     });
     /**
@@ -129,7 +184,7 @@ $(document).ready(function () {
      */
     menuContext.bind("close:finish", function () {
         setTimeout(function () {
-            $icon.removeClass("is-active");
+            baseHome.iconSwitch.removeClass("is-active");
         }, 100);
     });
 

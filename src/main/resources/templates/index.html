@@ -30,7 +30,7 @@
             <input type="file" id="uploadFile" name="file" class="file-loading" multiple/>
         </div>
 
-        <script>
+        <script type="text/javascript">
             var piCameraSwitch = function (optionType) {
                 $.get("/piControl/piCameraSwitch/{0}".format(optionType), function (result) {
                     console.log(result)

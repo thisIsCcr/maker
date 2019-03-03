@@ -114,7 +114,6 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
     private void handlerWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
         // 判断是否关闭链路的指令
         if (frame instanceof CloseWebSocketFrame) {
-            System.out.println(1);
             handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
@@ -150,8 +149,8 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             return;
         }
         //获取url后置参数
-        HttpMethod method = req.getMethod();
-        String uri = req.getUri();
+        HttpMethod method = req.method();
+        String uri = req.uri();
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
         Map<String, List<String>> parameters = queryStringDecoder.parameters();
         //System.out.println(parameters.get("request").get(0));
@@ -167,6 +166,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
                 "ws://" + req.headers().get(HttpHeaders.Names.HOST) + uri, null, false);
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
+            //sendUnsupportedWebSocketVersionResponse
             WebSocketServerHandshakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());
         } else {
             handshaker.handshake(ctx.channel(), req);

@@ -1,4 +1,4 @@
-<script>
+<script type="text/javascript">
     $(function () {
         $("#jobList").bootstrapTable({
            url:"/job/list",
@@ -50,8 +50,18 @@
                align:"center"
            }]
         })
-    })
 
+        $("#quartz_toolbar>button").on('click',function () {
+            toastr.success($(this).prop("id"))
+            switch($(this).prop("id")){
+                case btn_add:
+
+                    break;
+            }
+
+        })
+
+    })
 </script>
 <div class="container-fluid">
     <div class="row">
