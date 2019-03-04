@@ -29,7 +29,27 @@ $(document).ready(function () {
         }
     }
 
-    var socket=new WebSocket("ws://localhost:10010/websocket")
+    socket=new WebSocket("ws://localhost:10010/websocket")
+
+    socket.onmessage=function(event){
+        console.log(typeof event.data)
+        if(typeof event.data=="string"){
+            baseHome.successPrompt(event.data)
+        }
+        console.log(event.data)
+    }
+    socket.onopen=function(event){
+        console.log("打开通道")
+    }
+    socket.onclose=function(event){
+        console.log("关闭通道")
+    }
+    socket.onerror=function(event){
+        console.log("产生错误")
+    }
+
+
+
     if(!window.WebSocket){
 
     }

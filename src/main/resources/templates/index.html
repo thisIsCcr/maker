@@ -30,6 +30,7 @@
             <input type="file" id="uploadFile" name="file" class="file-loading" multiple/>
         </div>
 
+
         <script type="text/javascript">
             var piCameraSwitch = function (optionType) {
                 $.get("/piControl/piCameraSwitch/{0}".format(optionType), function (result) {
@@ -37,7 +38,8 @@
                 }, "json")
             }
         </script>
-        <div class="col-lg-2 Icell col-lg-offset-10 Loadanimation">
+
+        <div class="col-lg-2 Icell col-lg-offset-8 Loadanimation">
             <div class="text-center">
                 <h4>树莓派相机开关&nbsp;<small>raspberry pie</small>
                 </h4>
@@ -45,6 +47,7 @@
                 <input type="button" class="btn btn-danger" value="关闭" onclick="piCameraSwitch(0)"/>
             </div>
         </div>
+
 
     </div>
     <!--CPU使用率-->

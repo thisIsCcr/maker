@@ -7,8 +7,10 @@ import com.crsm.maker.base.BaseController;
 import com.crsm.maker.base.ResultStatusCodeEnum;
 import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.crsm.maker.resourcesFile.service.ISystemResourceService;
+import com.crsm.maker.socketService.Global;
 import com.crsm.maker.user.entity.SysUser;
 import com.crsm.maker.user.service.ISysUserService;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,6 +89,8 @@ public class SystemResourceController extends BaseController {
             e.printStackTrace();
             return fail();
         }
+        TextWebSocketFrame content=new TextWebSocketFrame(user.getUsrName()+"上传了文件：【"+fileName+"】");
+        Global.group.writeAndFlush(content);
         log.info("文件上传成功，文件名：{}",fileName);
         return success();
     }

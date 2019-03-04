@@ -79,19 +79,20 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
     private void handlerWebSocketFrame2(ChannelHandlerContext ctx, WebSocketFrame frame) {
         // 判断是否关闭链路的指令
         if (frame instanceof CloseWebSocketFrame) {
+            System.out.println("websocket end···");
             handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
         // 判断是否ping消息
         if (frame instanceof PingWebSocketFrame) {
+            System.out.println("获取到pong··············");
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
-        // 本例程仅支持文本消息，不支持二进制消息
+        // 不支持二进制消息
         if (!(frame instanceof TextWebSocketFrame)) {
             System.out.println("本例程仅支持文本消息，不支持二进制消息");
-            throw new UnsupportedOperationException(
-                    String.format("%s frame types not supported", frame.getClass().getName()));
+            throw new UnsupportedOperationException(String.format("%s frame types not supported", frame.getClass().getName()));
         }
         // 返回应答消息
         String request = ((TextWebSocketFrame) frame).text();
@@ -100,8 +101,10 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             logger.fine(String.format("%s received %s", ctx.channel(), request));
         }
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString() + ctx.channel().id() + "：" + request);
+
         // 群发
         Global.group.writeAndFlush(tws);
+
         // 返回【谁发的发给谁】
         // ctx.channel().writeAndFlush(tws);
     }
@@ -122,7 +125,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
-        // 本例程仅支持文本消息，不支持二进制消息
+        // 不支持二进制消息
         if (!(frame instanceof TextWebSocketFrame)) {
             System.out.println("本例程仅支持文本消息，不支持二进制消息");
             throw new UnsupportedOperationException(
@@ -142,6 +145,11 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
     }
 
 
+    /**
+     * HTTP请求握手 附加路由分发
+     * @param ctx
+     * @param req
+     */
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
         // 如果HTTP解码失败，返回HHTP异常
         if (!req.getDecoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
@@ -153,8 +161,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         String uri = req.uri();
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
         Map<String, List<String>> parameters = queryStringDecoder.parameters();
-        //System.out.println(parameters.get("request").get(0));
-        if (method == HttpMethod.GET && "/webssss".equals(uri)) {
+        if (method == HttpMethod.GET && "/websocketTwo".equals(uri)) {
             //....处理
             ctx.attr(AttributeKey.valueOf("type")).set("anzhuo");
         } else if (method == HttpMethod.GET && "/websocket".equals(uri)) {
@@ -167,7 +174,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
             //sendUnsupportedWebSocketVersionResponse
-            WebSocketServerHandshakerFactory.sendUnsupportedWebSocketVersionResponse(ctx.channel());
+            WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
             handshaker.handshake(ctx.channel(), req);
         }

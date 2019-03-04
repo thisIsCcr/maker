@@ -20,6 +20,5 @@ public class ChildChannelHandler extends ChannelInitializer<SocketChannel> {
         socketChannel.pipeline().addLast("http-chunked",new ChunkedWriteHandler());
         //在管道中添加我们自己的接收数据实现方法
         socketChannel.pipeline().addLast("handler",new MyWebSocketServerHandler());
-
     }
 }
