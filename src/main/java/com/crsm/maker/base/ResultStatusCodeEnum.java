@@ -8,7 +8,9 @@ import lombok.Getter;
 public enum ResultStatusCodeEnum {
     SUCCESS(200,"成功"),
     FAIL(500,"失败"),
-    REPEAT_DATA_ERROR(401,"数据重复");
+    REPEAT_DATA_ERROR(401,"数据重复")
+
+    ;
 
     @Getter
     private int code;

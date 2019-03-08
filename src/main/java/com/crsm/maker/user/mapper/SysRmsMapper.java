@@ -20,7 +20,10 @@ import java.util.List;
 @Mapper
 public interface SysRmsMapper extends BaseMapper<SysRms> {
 
-    public List<SysRms> getPermissionDataByFid(@Param("fid")int fid);
+     List<SysRms> getPermissionDataByFid(@Param("fid")int fid);
 
-    public int saveAndReturnId(SysRms sysRms);
+     int saveAndReturnId(SysRms sysRms);
+
+     @Deprecated
+     List<SysRms> getPermission(@Param("roleId")List roleId);
 }

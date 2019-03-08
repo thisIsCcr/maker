@@ -2,4 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crsm.maker.user.mapper.RoleRmsMapper">
 
+    <select id="getRmsId" resultType="java.lang.String">
+        SELECT
+            rms_id
+        FROM
+            role_rms
+        WHERE 1=1
+            <foreach collection="roleIds" item="item" index="index" open="and role_id IN (" close=")" separator=",">
+                #{item}
+            </foreach>
+    </select>
 </mapper>

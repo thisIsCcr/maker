@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -34,7 +35,7 @@ public class MailServiceTest {
 
     @Test
     public void mapper(){
-        List<SysTree> lis=sysTreeMapper.getMenuData();
+        List<SysTree> lis=sysTreeMapper.getPermission(new ArrayList<String>(){{add("1");add("2");}});
         for (SysTree item:lis){
             System.out.println(item.toString());
         }

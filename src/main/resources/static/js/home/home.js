@@ -26,7 +26,8 @@ $(document).ready(function () {
                 return;
             }
             toastr.warning(arguments[0], this.promptTitle)
-        }
+        },
+        autoCloseTime:4000
     }
 
     socket=new WebSocket("ws://localhost:10010/websocket")
@@ -49,11 +50,6 @@ $(document).ready(function () {
     }
 
 
-
-    if(!window.WebSocket){
-
-    }
-
     toastr.options = {
         "closeButton": true,
         "debug": false,
@@ -61,7 +57,7 @@ $(document).ready(function () {
         "progressBar": true,
         "positionClass": "toast-top-right",
         "preventDuplicates": false,
-        "showDuration": "300",
+        "showDuration": baseHome.autoCloseTime,
         "hideDuration": "1000",
         "timeOut": "5000",
         "extendedTimeOut": "1000",
@@ -84,9 +80,12 @@ $(document).ready(function () {
         }
     }*/
 
+    /**
+     * 页面初始化
+     */
     $("#tabContainer").tabs({
         data: [{
-            id: 'index',
+            id: '11',
             text: '首页',
             url: "index".format()
         }],
@@ -94,10 +93,18 @@ $(document).ready(function () {
         loadAll: true
     });
 
+    $(document).ajaxError(function(evt, request, settings){
+        var content=request.responseText;
+        var errorMsg=$(content).find("span").text();
+        toastr.error(errorMsg, "请求错误")
+    });
+
     tabContext = $("#tabContainer").data("tabs");
 
-
-    //初始化侧边栏
+    /**
+     * 初始化侧边栏
+     * @type {*|jQuery}
+     */
     var $menu = $("#my-menu").mmenu({
         /*"extensions":[
             "position-bottom"
@@ -126,6 +133,74 @@ $(document).ready(function () {
     })
 
 
+    /**
+     * 打开登陆页面
+     */
+    $("#login").on("click",function(){
+        $.confirm({
+            title:"登录",
+            content:"url:/static/LoginTemplate",
+            theme: 'supervan',
+            draggable:false,
+            buttons:{
+                ok:{
+                    text:"登录",
+                    action:function(){
+                        var form=this.$content.find("#home_login");
+                        var validatorContext=form.data("bootstrapValidator")
+                        validatorContext.validate();
+                        if(!validatorContext.isValid()){
+                            return false;
+                        }
+                        $.post("/user/login",form.serialize(),function(result){
+                            console.log(result)
+                        })
+                    }
+                },
+                cancel:{
+                    text:"取消",
+                    action:function(){
+
+                    }
+                }
+            },
+            onContentReady:function(){
+                var self=this;
+                this.$content.find("#home_login").bootstrapValidator({
+                    feedbackIcons: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields:{
+                        userName:{
+                            message:"请输入正确的用户名",
+                            validators:{
+                                notEmpty:"请输入用户名",
+                                stringLength:{
+                                    min:1,
+                                    max:8,
+                                    message:"用户名最小长度为1，最大长度为8"
+                                }
+                            }
+                        },
+                        userPassword:{
+                            message:"请输入正确的密码",
+                            validators:{
+                                notEmpty:"请输入密码",
+                                stringLength:{
+                                    min:1,
+                                    max:8,
+                                    message:"密码名最小长度为1，最大长度为8"
+                                }
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    });
+
     menuContext = $menu.data("mmenu");
     //打开关闭
     baseHome.iconSwitch.on("click", function () {
@@ -136,6 +211,9 @@ $(document).ready(function () {
         }
     });
 
+    /**
+     * 加载可用列表
+     */
     setTimeout(function () {
         $.ajax({
             url: "/getMenuData",
@@ -164,7 +242,6 @@ $(document).ready(function () {
                             }
 
                         }
-                        console.log(content)
                     }
                     menuContext.initPanels();
                 }
@@ -199,6 +276,7 @@ $(document).ready(function () {
             baseHome.iconSwitch.addClass("is-active");
         }, 100);
     });
+
     /**
      * 关闭侧边栏
      */
@@ -209,9 +287,8 @@ $(document).ready(function () {
     });
 
     /**
-     *
+     *  单击浮动效果
      */
-        //单击次数
     var click_cnt = 0;
     //获取HTML
     var $html = document.getElementsByTagName("html")[0];

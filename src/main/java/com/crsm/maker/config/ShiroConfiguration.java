@@ -3,7 +3,12 @@ package com.crsm.maker.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.session.mgt.SessionValidationScheduler;
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -13,7 +18,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * creat by Ccr on 2018/12/10
@@ -62,7 +69,9 @@ public class ShiroConfiguration {
         return hashedCredentialsMatcher;
     }
 
-    //将自己的验证方式加入容器
+    /**
+     * 将自己的验证方式加入容器
+     */
     @Bean
     public MyShiroRealm myShiroRealm() {
         MyShiroRealm myShiroRealm = new MyShiroRealm();
@@ -70,12 +79,51 @@ public class ShiroConfiguration {
         return myShiroRealm;
     }
 
+    /**
+     * 验证会话
+     * @return
+     */
+    @Bean
+    public SessionValidationScheduler sessionValidationScheduler(){
+        ExecutorServiceSessionValidationScheduler scheduler=new ExecutorServiceSessionValidationScheduler();
+        scheduler.setInterval(5000);
+        return scheduler;
+    }
 
+    /**
+     * 配置session管理
+     * @return
+     */
     @Bean
     public SessionManager sessionManager() {
         MySessionManager mySessionManager = new MySessionManager();
-        //mySessionManager.setSessionDAO();
+        //添加Session监听
+        List SessionListeners =new ArrayList<SessionListener>();
+        SessionListeners.add(sessionListener());
+        mySessionManager.setSessionListeners(SessionListeners);
+        //设置会话失效时间
+        mySessionManager.setGlobalSessionTimeout(5000);
+        //会话验证时间
+        mySessionManager.setSessionValidationScheduler(sessionValidationScheduler());
+        //会话失效删除
+        mySessionManager.setDeleteInvalidSessions(true);
+        mySessionManager.setSessionDAO(sessionDAO());
         return mySessionManager;
+    }
+
+    @Bean
+    public SessionDAO sessionDAO(){
+        SessionDAO sessionDAO=new EnterpriseCacheSessionDAO();
+        return sessionDAO;
+    }
+
+    /**
+     * Session监听
+     * @return
+     */
+    @Bean
+    public SessionListener sessionListener(){
+        return new SessionMonitor();
     }
 
 
@@ -88,7 +136,7 @@ public class ShiroConfiguration {
         //自定义session管理
         securityManager.setSessionManager(sessionManager());
         //自定义缓存管理
-        //manager.setCacheManager();
+        //securityManager.setCacheManager();
         return securityManager;
     }
 
@@ -118,7 +166,7 @@ public class ShiroConfiguration {
 
     /**
      * 开启shiro aop支持
-     * 使用代理方式
+     * 使用代理方式 启用注解
      *
      * @param manager
      * @return
@@ -129,6 +177,9 @@ public class ShiroConfiguration {
         advisor.setSecurityManager(manager);
         return advisor;
     }
+
+
+
 
 
 }

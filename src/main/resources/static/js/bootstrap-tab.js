@@ -161,7 +161,15 @@
         //div-content
         var div_content_panel = $(this.template.div_content_panel.format(obj.id));
         this.$element.find(".tab-content:eq(0)").append(div_content_panel);
-        $("#" + obj.id).load(obj.url,obj.paramter);
+        $("#" + obj.id).load(obj.url,obj.paramter,function(response,status,xhr){
+            //请求失败处理 （将就着。。
+            if(xhr.status!=200){
+                $(this).html(response);
+                setTimeout(function(){
+                    self.$element.find(".nav-tabs li a[href='#" + obj.id + "'] i.glyphicon-remove").click();
+                },baseHome.autoCloseTime)
+            }
+        });
         this.stateObj[obj.id] = true;
         if(obj.closeable){
             this.$element.find(".nav-tabs li a[href='#" + obj.id + "'] i.glyphicon-remove").click(function () {

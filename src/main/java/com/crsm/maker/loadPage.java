@@ -1,5 +1,7 @@
 package com.crsm.maker;
 
+import com.crsm.maker.base.BaseController;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  **/
 @Controller
 @RequestMapping
-public class loadPage {
+public class loadPage extends BaseController {
 
     @RequestMapping("/")
     public String enterLoginPage(){
@@ -20,8 +22,13 @@ public class loadPage {
         return "index";
     }
 
+    /**
+     * 开启权限
+     * @return
+     */
+    @RequiresAuthentication
     @RequestMapping("quartzPage")
-    public String getQuratzJobListPage(){
+    public String getQuratzJobListPage() {
         return "quartzJobList";
     }
 
@@ -34,4 +41,5 @@ public class loadPage {
     public String getresourceFilePage(){
         return "fileResource";
     }
+
 }

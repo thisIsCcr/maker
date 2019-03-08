@@ -100,7 +100,9 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         if (logger.isLoggable(Level.FINE)) {
             logger.fine(String.format("%s received %s", ctx.channel(), request));
         }
+
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString() + ctx.channel().id() + "：" + request);
+
 
         // 群发
         Global.group.writeAndFlush(tws);

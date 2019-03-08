@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<script type="text/javascript">
+    $(document).ready(function(){
+        var i=3
+        var timing=setInterval(function(){
+            $("#Timing").html(i--)
+            if(i==-1){
+                clearInterval(timing);
+            }
+        },800)
+    })
+</script>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="jumbotron">
+                    <h1>产生了一个的错误</h1>
+                    <p><span th:text="${errorMsg}"></span></p>
+                    <p>页面距离自动关闭还剩<i id="Timing">3</i>秒</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

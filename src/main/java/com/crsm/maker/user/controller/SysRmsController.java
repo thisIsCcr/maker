@@ -12,6 +12,9 @@ import com.crsm.maker.user.service.IRoleRmsService;
 import com.crsm.maker.user.service.ISysRmsService;
 import com.crsm.maker.user.service.ISysRoleService;
 import com.crsm.maker.user.service.ISysTreeService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +29,7 @@ import java.util.List;
  * @since 2019-01-14
  */
 @RestController
-@RequestMapping("rms")
+@RequestMapping("user")
 public class SysRmsController extends BaseController {
 
     @Autowired
@@ -70,7 +73,7 @@ public class SysRmsController extends BaseController {
      */
     @RequestMapping(value = "getAllrole", method = RequestMethod.GET)
     public String getAllrole() {
-        List<SysRole> SysRolelist = iSysRoleService.list(new QueryWrapper<SysRole>());
+        List<SysRole> SysRolelist = iSysRoleService.list(new QueryWrapper<>());
         return success(SysRolelist);
     }
 
@@ -125,6 +128,35 @@ public class SysRmsController extends BaseController {
             return success();
         }
         return fail();
+    }
+
+
+    @PostMapping("/login")
+    public String login(@RequestParam("userName")String userName,@RequestParam("userPassword")String userPassword){
+        Subject subject=SecurityUtils.getSubject();
+        UsernamePasswordToken token=new UsernamePasswordToken(userName,userPassword);
+        try {
+            subject.login(token);
+        }catch(UnknownAccountException e){//未知账户
+            throw new UnknownAccountException("未知账户");
+        }catch(IncorrectCredentialsException e){//密码错误
+            throw new IncorrectCredentialsException("密码错误");
+        }catch (LockedAccountException e){//账号已锁定
+            throw new LockedAccountException("账号已锁定");
+        }catch (ConcurrentAccessException e){//并发访问
+            throw new ConcurrentAccessException("账号已登录");
+        }catch (AccountException e){
+            throw new AccountException("登录失败 未知错误");
+        }
+        return success();
+    }
+
+
+    @RequestMapping("testPermission")
+    public String testPermission(){
+        Subject subject=SecurityUtils.getSubject();
+        System.out.println(subject.isPermitted("定时任务:ccr:*"));
+        return success();
     }
 
 

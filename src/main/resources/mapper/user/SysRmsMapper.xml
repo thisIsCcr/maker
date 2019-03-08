@@ -23,4 +23,18 @@
          RIGHT JOIN `sys_tree` st ON sr.`id`=st.`rms_id`
          WHERE st.`f_rms_id`=#{fid}
     </select>
+
+    <select id="getPermission" resultType="com.crsm.maker.user.entity.SysRms">
+        SELECT
+          sr.rms_name,
+          sr.`rms_url`
+        FROM
+          `sys_rms` sr
+         RIGHT JOIN `sys_tree` st ON sr.`id`=st.`rms_id`
+         RIGHT JOIN `role_rms` rs ON sr.`id`=rs.`rms_id`
+	     WHERE rs.role_id in 
+	     <foreach collection="roleId" item="item" index="index" open="(" separator="," close=")">
+             #{item}
+         </foreach>
+    </select>
 </mapper>

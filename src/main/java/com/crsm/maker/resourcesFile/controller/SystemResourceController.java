@@ -90,6 +90,9 @@ public class SystemResourceController extends BaseController {
             return fail();
         }
         TextWebSocketFrame content=new TextWebSocketFrame(user.getUsrName()+"上传了文件：【"+fileName+"】");
+        if(Global.group.isEmpty()){
+            System.out.println("No Online user");
+        }
         Global.group.writeAndFlush(content);
         log.info("文件上传成功，文件名：{}",fileName);
         return success();
@@ -98,7 +101,7 @@ public class SystemResourceController extends BaseController {
 
     @RequestMapping(value = "getResourceFileInfo",method = RequestMethod.GET)
     public String getResourceFileInfo(){
-        Page<SysResource> page=new Page<>(1,10);
+        Page<SysResource> page=new Page<>(1,40);
         SysResource sysResource=new SysResource();
         IPage<SysResource> iPage= iSystemResourceService.selectPageVo(page,sysResource);
         return success(iPage);

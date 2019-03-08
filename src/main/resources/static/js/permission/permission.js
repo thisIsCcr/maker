@@ -2,7 +2,7 @@ $(function () {
     var obutton = new Object();
     var botsTable = $('#rsm-table');
     botsTable.bootstrapTable({
-        url: "/rms/getAllrmsData",
+        url: "/user/getAllrmsData",
         cache: false, //禁用缓存
         search: true, //启用搜索
         clickToSelect: true,
@@ -58,7 +58,7 @@ $(function () {
     function expandSubist(index, row, $detail) {
         var current = $detail.html("<table></table>").find("table");
         current.bootstrapTable({
-            url: "/rms/getAllrmsData",
+            url: "/user/getAllrmsData",
             detailView: true,
             responseHandler: function (res) {       //加载服务器数据之前的处理程序，可以用来格式化数据。
                 return res.data;
@@ -111,7 +111,7 @@ $(function () {
                             return false;
                         }
                         var data = this.$content.find("#addform").serialize();
-                        $.post("/rms/addPermission", data, function (result) {
+                        $.post("/user/addPermission", data, function (result) {
                             baseHome.successPrompt(result.msg)
                         }, 'json');
                     }
@@ -127,7 +127,7 @@ $(function () {
                 var self = this;
                 //加载角色
                 $.ajax({
-                    url: "/rms/getAllrole",
+                    url: "/user/getAllrole",
                     method: "get",
                     dataType: "json",
                     success: function (result) {
@@ -236,7 +236,7 @@ $(function () {
             baseHome.warningPrompt("请选择需要操作的行");
             return false;
         }
-        $.get("/rms/delePermission/{0}".format(getSelections[0].id),function(result){
+        $.get("/user/delePermission/{0}".format(getSelections[0].id),function(result){
            baseHome.successPrompt(result.msg);
         },"json")
     }

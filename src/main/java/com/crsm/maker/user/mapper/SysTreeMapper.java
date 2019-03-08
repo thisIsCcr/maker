@@ -3,6 +3,7 @@ package com.crsm.maker.user.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.crsm.maker.user.entity.SysTree;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,5 +21,7 @@ import java.util.List;
 public interface SysTreeMapper extends BaseMapper<SysTree> {
 
     public List<SysTree> getMenuData();
+
+    List<SysTree> getPermission(@Param("roleId")List roleId);
 
 }

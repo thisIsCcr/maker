@@ -8,6 +8,7 @@
         <result column="rms_id" property="rmsId"/>
         <result column="type" property="type"/>
         <association property="sysRms" javaType="com.crsm.maker.user.entity.SysRms">
+            <id column="role_id" property="id"/>
             <result column="rms_name" property="rmsName"/>
             <result column="rms_iocn" property="rmsIocn"/>
             <result column="rms_url" property="rmsUrl"/>
@@ -23,5 +24,25 @@
         RIGHT JOIN `sys_tree` st ON st.`rms_id`=sr.`id`
         WHERE st.`type`=0 ORDER BY st.`f_rms_id`
     </select>
+
+
+    <select id="getPermission" resultMap="getMenuData_map">
+        SELECT
+          sr.id as `rms_id`,
+          sr.rms_name,
+          sr.`rms_url`,
+          rs.role_id,
+          rs.id
+        FROM
+          `sys_rms` sr
+         RIGHT JOIN `sys_tree` st ON sr.`id`=st.`rms_id`
+         RIGHT JOIN `role_rms` rs ON sr.`id`=rs.`rms_id`
+	 WHERE rs.role_id IN
+        <foreach collection="roleId" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+	 GROUP BY sr.`id`;
+    </select>
+
 
 </mapper>
