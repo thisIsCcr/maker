@@ -148,13 +148,15 @@ public class SysRmsController extends BaseController {
         }catch (AccountException e){
             throw new AccountException("登录失败 未知错误");
         }
-        return success();
+        return success(subject.getSession().getId());
     }
 
 
     @RequestMapping("testPermission")
     public String testPermission(){
         Subject subject=SecurityUtils.getSubject();
+        System.out.println(subject.getSession().getId());
+        System.out.println(subject.getSession().getTimeout());
         System.out.println(subject.isPermitted("定时任务:ccr:*"));
         return success();
     }

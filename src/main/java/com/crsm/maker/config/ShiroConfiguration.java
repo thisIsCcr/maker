@@ -3,18 +3,20 @@ package com.crsm.maker.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
-import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
+import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,8 +31,9 @@ import java.util.List;
 @Slf4j
 public class ShiroConfiguration {
 
+
     @Bean(name = "shiroFilet")
-    public ShiroFilterFactoryBean shiroFilterFactoryBean(@Qualifier("securityManager") SecurityManager manager) {
+    public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager manager) {
         ShiroFilterFactoryBean bean = new ShiroFilterFactoryBean();
         bean.setSecurityManager(manager);
         //配置登录的url和登录成功的url
@@ -86,8 +89,31 @@ public class ShiroConfiguration {
     @Bean
     public SessionValidationScheduler sessionValidationScheduler(){
         ExecutorServiceSessionValidationScheduler scheduler=new ExecutorServiceSessionValidationScheduler();
-        scheduler.setInterval(5000);
+        scheduler.setInterval(3600000);
         return scheduler;
+    }
+
+    /**
+     * redis配置
+     * @return
+     */
+    @Bean
+    public RedisManager redisManager(){
+        RedisManager redisManager=new RedisManager();
+        redisManager.setHost("192.168.0.112:6379");
+        redisManager.setPassword("1999ccr..");
+        return redisManager;
+    }
+
+    /**
+     * Redis session DAO
+     * @return
+     */
+    @Bean
+    public RedisSessionDAO redisSessionDAO(){
+        RedisSessionDAO redisSessionDAO=new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        return redisSessionDAO;
     }
 
     /**
@@ -102,20 +128,29 @@ public class ShiroConfiguration {
         SessionListeners.add(sessionListener());
         mySessionManager.setSessionListeners(SessionListeners);
         //设置会话失效时间
-        mySessionManager.setGlobalSessionTimeout(5000);
+        mySessionManager.setGlobalSessionTimeout(3600000);
         //会话验证时间
         mySessionManager.setSessionValidationScheduler(sessionValidationScheduler());
         //会话失效删除
         mySessionManager.setDeleteInvalidSessions(true);
-        mySessionManager.setSessionDAO(sessionDAO());
+        //自定义管理器
+        mySessionManager.setCacheManager(cacheManager());
+        //添加添加Dao缓存支持
+        mySessionManager.setSessionDAO(redisSessionDAO());
         return mySessionManager;
     }
 
+    /**
+     *
+     * @return
+     */
     @Bean
-    public SessionDAO sessionDAO(){
-        SessionDAO sessionDAO=new EnterpriseCacheSessionDAO();
-        return sessionDAO;
+    public RedisCacheManager cacheManager(){
+        RedisCacheManager manager=new RedisCacheManager();
+        manager.setRedisManager(redisManager());
+        return manager;
     }
+
 
     /**
      * Session监听
@@ -128,29 +163,19 @@ public class ShiroConfiguration {
 
 
     //配置核心安全事务管理器
-    @Bean(name = "securityManager")
-    public SecurityManager securityManager() {
+    @Bean
+    public SessionsSecurityManager securityManager(List<Realm> realms, SessionManager sessionManager) {
         log.info("---------------shiro已加载-------------------");
-        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(realms);
+
         securityManager.setRealm(myShiroRealm());
         //自定义session管理
-        securityManager.setSessionManager(sessionManager());
+        securityManager.setSessionManager(sessionManager);
         //自定义缓存管理
-        //securityManager.setCacheManager();
+        securityManager.setCacheManager(cacheManager());
         return securityManager;
     }
 
-
-    //配置自定义的密码比较器
-    /*@Bean(name = "credentialsMatcher")
-    public CredentialsMatcher credentialsMatcher() {
-        return new CredentialsMatcher() {
-            @Override
-            public boolean doCredentialsMatch(AuthenticationToken authenticationToken, AuthenticationInfo authenticationInfo) {
-                return false;
-            }
-        };
-    }*/
 
     @Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
@@ -172,7 +197,7 @@ public class ShiroConfiguration {
      * @return
      */
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Qualifier("securityManager") SecurityManager manager) {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager manager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(manager);
         return advisor;
