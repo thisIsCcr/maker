@@ -7,7 +7,7 @@ import com.crsm.maker.base.BaseController;
 import com.crsm.maker.base.ResultStatusCodeEnum;
 import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.crsm.maker.resourcesFile.service.ISystemResourceService;
-import com.crsm.maker.socketService.Global;
+import com.crsm.maker.socketService.webSocket.Global;
 import com.crsm.maker.user.entity.SysUser;
 import com.crsm.maker.user.service.ISysUserService;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;

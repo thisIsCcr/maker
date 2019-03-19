@@ -41,7 +41,10 @@ $(function () {
         }, {
             field: 'rmsIocn',
             title: '图标',
-            align: "center"
+            align: "center",
+            formatter:function(value,row,index){
+                return "<i class='{0}'></i>".format(value);
+            }
         }, {
             field: 'rmsUrl',
             title: '拦截路径',
@@ -84,7 +87,10 @@ $(function () {
             }, {
                 field: 'rmsIocn',
                 title: '图标',
-                align: "center"
+                align: "center",
+                formatter:function(value,row,index){
+                    return "<i class='{0}'></i>".format(value);
+                }
             }, {
                 field: 'rmsUrl',
                 title: '拦截路径',

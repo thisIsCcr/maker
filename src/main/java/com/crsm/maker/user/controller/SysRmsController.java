@@ -4,10 +4,7 @@ package com.crsm.maker.user.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.crsm.maker.base.BaseController;
-import com.crsm.maker.user.entity.RoleRms;
-import com.crsm.maker.user.entity.SysRms;
-import com.crsm.maker.user.entity.SysRole;
-import com.crsm.maker.user.entity.SysTree;
+import com.crsm.maker.user.entity.*;
 import com.crsm.maker.user.service.IRoleRmsService;
 import com.crsm.maker.user.service.ISysRmsService;
 import com.crsm.maker.user.service.ISysRoleService;
@@ -43,6 +40,7 @@ public class SysRmsController extends BaseController {
 
     @Autowired
     private IRoleRmsService iRoleRmsService;
+
 
     /**
      * 获取所有菜单
@@ -155,6 +153,7 @@ public class SysRmsController extends BaseController {
     @RequestMapping("testPermission")
     public String testPermission(){
         Subject subject=SecurityUtils.getSubject();
+        System.out.println(subject.getPrincipal());
         System.out.println(subject.getSession().getId());
         System.out.println(subject.getSession().getTimeout());
         System.out.println(subject.isPermitted("定时任务:ccr:*"));

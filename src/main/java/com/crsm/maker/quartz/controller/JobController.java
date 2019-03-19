@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +25,14 @@ public class JobController extends BaseController {
     @Autowired
     private Scheduler scheduler;
 
-
     /**
      * 获取所有作业详情
      * @return
      * @throws Exception
      */
-    @RequestMapping("list")
+    @GetMapping("list")
     public String getSchedulerJobInfo() throws Exception {
-        List<JobEntity> jobInfos = new ArrayList<JobEntity>();
+        List<JobEntity> jobInfos = new ArrayList<>();
         List<String> triggerGroupNames = scheduler.getTriggerGroupNames();
         for (String triggerGroupName : triggerGroupNames) {
             Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(triggerGroupName));
@@ -88,22 +84,17 @@ public class JobController extends BaseController {
         return success(jobInfos);
     }
 
-    @PostMapping(value = "/addjob")
-    public void addjob(@RequestParam(value = "jobClassName") String jobClassName,
-                       @RequestParam(value = "jobGroupName") String jobGroupName,
-                       @RequestParam(value = "cronExpression") String cronExpression) throws Exception {
-        addJob(jobClassName, jobGroupName, cronExpression);
-        log.info("添加定时器成功：{}",jobGroupName);
-    }
-
     /**
-     * 添加定时器
+     * 添加任务
      * @param jobClassName
      * @param jobGroupName
      * @param cronExpression
      * @throws Exception
      */
-    public void addJob(String jobClassName, String jobGroupName, String cronExpression) throws Exception {
+    @PostMapping(value = "/addjob")
+    public void addjob(@RequestParam(value = "jobClassName") String jobClassName,
+                       @RequestParam(value = "jobGroupName") String jobGroupName,
+                       @RequestParam(value = "cronExpression") String cronExpression) throws Exception {
         // 启动调度器
         scheduler.start();
         //构建job信息
@@ -118,6 +109,7 @@ public class JobController extends BaseController {
             System.out.println("创建定时任务失败" + e);
             throw new Exception("创建定时任务失败");
         }
+        log.info("添加定时器成功：{}",jobGroupName);
     }
 
     /**
@@ -128,12 +120,41 @@ public class JobController extends BaseController {
      */
     @PostMapping(value = "/pausejob")
     public void pausejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
-        jobPause(jobClassName, jobGroupName);
+        JobKey Key=JobKey.jobKey(jobClassName, jobGroupName);
+        scheduler.getJobDetail(Key);
+        scheduler.pauseJob(JobKey.jobKey(jobClassName, jobGroupName));
         log.info("暂停任务成功：{}",jobGroupName);
     }
 
-    public void jobPause(String jobClassName, String jobGroupName) throws Exception {
-        scheduler.pauseJob(JobKey.jobKey(jobClassName, jobGroupName));
+
+    /**
+     *
+     * @param jobClassName
+     * @param jobGroupName
+     * @param operatType 操作类型、0：暂停任务、1：恢复任务
+     * @return
+     * @throws SchedulerException
+     */
+    @PostMapping("/pauseOrResumeJob")
+    public String pauseOrResumeJob(@RequestParam(value = "jobClassName") String jobClassName,
+                                   @RequestParam(value = "jobGroupName") String jobGroupName,
+                                   @RequestParam("operatType")Integer operatType) throws SchedulerException {
+        /*JobKey jKey=JobKey.jobKey(jobClassName, jobGroupName);
+        JobDetail detail=scheduler.getJobDetail(jKey);*/
+        //获取触发器
+        TriggerKey tKey=TriggerKey.triggerKey(jobClassName, jobGroupName);
+        if(tKey!=null){
+            Trigger.TriggerState state=scheduler.getTriggerState(tKey);
+            if(!(Trigger.TriggerState.PAUSED==state || Trigger.TriggerState.NORMAL==state)){
+                throw new SchedulerException("失败，当前状态不无法操作");
+            }
+        }
+        if(operatType==0){
+            scheduler.pauseJob(JobKey.jobKey(jobClassName, jobGroupName));
+        }else{
+            scheduler.resumeJob(JobKey.jobKey(jobClassName, jobGroupName));
+        }
+        return success();
     }
 
     /**
@@ -144,13 +165,11 @@ public class JobController extends BaseController {
      */
     @PostMapping(value = "/resumejob")
     public void resumejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
-        jobresume(jobClassName, jobGroupName);
+        scheduler.resumeJob(JobKey.jobKey(jobClassName, jobGroupName));
         log.info("恢复任务成功：{}",jobGroupName);
     }
 
-    public void jobresume(String jobClassName, String jobGroupName) throws Exception {
-        scheduler.resumeJob(JobKey.jobKey(jobClassName, jobGroupName));
-    }
+
 
     /**
      * 修改任务时间
@@ -163,10 +182,6 @@ public class JobController extends BaseController {
     public void rescheduleJob(@RequestParam(value = "jobClassName") String jobClassName,
                               @RequestParam(value = "jobGroupName") String jobGroupName,
                               @RequestParam(value = "cronExpression") String cronExpression) throws Exception {
-        jobreschedule(jobClassName, jobGroupName, cronExpression);
-    }
-
-    public void jobreschedule(String jobClassName, String jobGroupName, String cronExpression) throws Exception {
         try {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobClassName, jobGroupName);
             // 表达式调度构建器
@@ -183,6 +198,7 @@ public class JobController extends BaseController {
         }
     }
 
+
     /**
      * 移除任务
      * @param jobClassName
@@ -191,15 +207,12 @@ public class JobController extends BaseController {
      */
     @PostMapping(value = "/deletejob")
     public void deletejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
-        jobdelete(jobClassName, jobGroupName);
-        log.info("移除任务成功：{}",jobGroupName);
-    }
-
-    public void jobdelete(String jobClassName, String jobGroupName) throws Exception {
         scheduler.pauseTrigger(TriggerKey.triggerKey(jobClassName, jobGroupName));
         scheduler.unscheduleJob(TriggerKey.triggerKey(jobClassName, jobGroupName));
         scheduler.deleteJob(JobKey.jobKey(jobClassName, jobGroupName));
+        log.info("移除任务成功：{}",jobGroupName);
     }
+
 
     /**
      * 必须是Job（BaseJob）的子类，

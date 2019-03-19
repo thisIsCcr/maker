@@ -8,9 +8,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 简易的异常处理，Controller
  */
@@ -24,11 +21,13 @@ public class MyControllerAdvice extends BaseController {
      */
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
-    public Map errorHandler(Exception ex){
-        Map map=new HashMap();
-        map.put("code",100);
-        map.put("msg",ex.getMessage());
-        return map;
+    public ModelAndView errorHandler(Exception ex){
+        ex.printStackTrace();
+        ModelAndView modelAndView=new ModelAndView();
+        modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        modelAndView.setViewName("error");
+        modelAndView.addObject("errorMsg",ex.getMessage());
+        return modelAndView;
     }
 
     /**

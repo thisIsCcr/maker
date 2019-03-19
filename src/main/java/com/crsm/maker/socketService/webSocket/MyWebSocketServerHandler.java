@@ -1,4 +1,4 @@
-package com.crsm.maker.socketService;
+package com.crsm.maker.socketService.webSocket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -66,7 +66,6 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             handleHttpRequest(ctx, ((FullHttpRequest) msg));
             // WebSocket接入
         } else if (msg instanceof WebSocketFrame) {
-            System.out.println(handshaker.uri());
             if ("anzhuo".equals(ctx.attr(AttributeKey.valueOf("type")).get())) {
                 handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
             } else {
@@ -79,13 +78,11 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
     private void handlerWebSocketFrame2(ChannelHandlerContext ctx, WebSocketFrame frame) {
         // 判断是否关闭链路的指令
         if (frame instanceof CloseWebSocketFrame) {
-            System.out.println("websocket end···");
             handshaker.close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
         // 判断是否ping消息
         if (frame instanceof PingWebSocketFrame) {
-            System.out.println("获取到pong··············");
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             return;
         }
@@ -163,6 +160,8 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         String uri = req.uri();
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
         Map<String, List<String>> parameters = queryStringDecoder.parameters();
+        System.out.println(parameters.get("sessionId"));
+
         if (method == HttpMethod.GET && "/websocketTwo".equals(uri)) {
             //....处理
             ctx.attr(AttributeKey.valueOf("type")).set("anzhuo");
@@ -170,9 +169,10 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             //...处理
             ctx.attr(AttributeKey.valueOf("type")).set("live");
         }
-        // 构造握手响应返回，本机测试
+        // 构造握手响应返回
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-                "ws://" + req.headers().get(HttpHeaders.Names.HOST) + uri, null, false);
+                "ws://" + req.headers().get(HttpHeaders.Names.HOST) + uri, null, true);
+        //创建握手消息
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
             //sendUnsupportedWebSocketVersionResponse

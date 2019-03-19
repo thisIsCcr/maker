@@ -62,15 +62,15 @@
                     var imgdata = result.data.records;
                     var intactData
                         , template =
-                        "<div class='item' id='file_item_{0}'><img class=\"img-rounded\" src='http://47.98.124.87/usr/maker/upFile/{1}' width='100%'/><div class='item-lable'>创建时间：{2}</div></div>";
+                        "<div class='item' id='file_item_{0}'><img class=\"img-rounded\" src='http://{1}/usr/maker/upFile/{2}' width='100%'/><div class='item-lable'>创建时间：{3}</div></div>";
                     /*for (key in imgdata) {
                         intactData += template.format(imgdata[key].id, imgdata[key].resName, imgdata[key].resCreatetime);
                     }*/
                     //循环创建setTime模拟休眠 进行延迟加载
                     for (key in imgdata) {
                         (function (key) {
-                            setTimeout(function () {
-                                wall.prepend(template.format(imgdata[key].id, imgdata[key].resName, imgdata[key].resCreatetime));
+                            var lazyLoad=setTimeout(function () {
+                                wall.prepend(template.format(imgdata[key].id,baseHome.staticImgURL(), imgdata[key].resName, imgdata[key].resCreatetime));
                                 wall.fitWidth();
                             }, key * 1100)
                         })(key)

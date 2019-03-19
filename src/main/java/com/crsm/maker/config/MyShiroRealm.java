@@ -42,31 +42,33 @@ public class MyShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        SimpleAuthorizationInfo info=new SimpleAuthorizationInfo();
-        SysUser user=(SysUser)principalCollection.getPrimaryPrincipal();
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        SysUser user = (SysUser) principalCollection.getPrimaryPrincipal();
         //通过用户名查询角色Id
-        List roleId=roleMapper.getRoleId(user.getId());
-        Set<Permission> wildcars=new HashSet<>();
-        List<SysTree> permissions =sysTreeMapper.getPermission(roleId);
-        //添加角色
-        info.addRoles(roleId);
-        //添加权限
-        if(!permissions.isEmpty()){
-            for (SysTree item:permissions) {
-                wildcars.add(new WildcardPermission(buildPermissionformatData(item.getRmsId().toString(),item.getSysRms().getRmsUrl(),item.getSysRms().getId().toString())));
+        List roleId = roleMapper.getRoleId(user.getId());
+        if (!roleId.isEmpty()) {
+            Set<Permission> wildcars = new HashSet<>();
+            List<SysTree> permissions = sysTreeMapper.getPermission(roleId);
+            //添加角色
+            info.addRoles(roleId);
+            //添加权限
+            if (!permissions.isEmpty()) {
+                for (SysTree item : permissions) {
+                    wildcars.add(new WildcardPermission(buildPermissionformatData(item.getRmsId().toString(), item.getSysRms().getRmsUrl(), item.getSysRms().getId().toString())));
+                }
+                info.addObjectPermissions(wildcars);
             }
-            info.addObjectPermissions(wildcars);
-        }
-        //开放所有权限
-        info.addObjectPermission(new WildcardPermission(buildPermissionformatData("*","*","*")));
-        for (Permission lis:info.getObjectPermissions()){
-            System.out.println(lis);
+            //开放所有权限
+            info.addObjectPermission(new WildcardPermission(buildPermissionformatData("*", "*", "*")));
+            for (Permission lis : info.getObjectPermissions()) {
+                System.out.println(lis);
+            }
         }
         return info;
     }
 
-    public static String buildPermissionformatData(String... content){
-        StringBuffer stringBuffer=new StringBuffer();
+    public static String buildPermissionformatData(String... content) {
+        StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(content[0]);
         stringBuffer.append(":");
         stringBuffer.append(content[1]);
@@ -94,6 +96,7 @@ public class MyShiroRealm extends AuthorizingRealm {
 
     /**
      * 密码加密格式
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -103,7 +106,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         String salt1 = username;
         String salt2 = new SecureRandomNumberGenerator().nextBytes().toHex();
         int hashIterations = 1024;
-        SimpleHash hash = new SimpleHash(algorithmName, password,salt1 + salt2, hashIterations);
+        SimpleHash hash = new SimpleHash(algorithmName, password, salt1 + salt2, hashIterations);
         String encodedPassword = hash.toHex();
         System.out.println(encodedPassword);
         System.out.println(salt2);

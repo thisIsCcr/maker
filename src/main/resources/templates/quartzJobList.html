@@ -1,65 +1,120 @@
 <script type="text/javascript">
     $(function () {
         $("#jobList").bootstrapTable({
-           url:"/job/list",
-           responseHandler:function (res) {
-               console.log(res.data)
-               return res.data;
-           },
-           columns:[{
-               checkbox:true
-           },{
-               field:"jobId",
-               title:"id",
-               align:"center"
-           },{
-               field:"jobName",
-               title:"名称",
-               align:"center"
-           },{
-               field:"jobGroup",
-               title:"jobGroup",
-               align:"center"
-           },{
-               field:"triggerName",
-               title:"triggerName",
-               align:"center"
-           },{
-               field:"triggerGroupName",
-               title:"triggerGroupName",
-               align:"center"
-           },{
-               field:"jobStatus",
-               title:"状态",
-               align:"center"
-           },{
-               field:"nextFireTime",
-               title:"下次运行时间",
-               align:"center"
-           },{
-               field:"previousFireTime",
-               title:"上次运行时间",
-               align:"center"
-           },{
-               field:"runTimes",
-               title:"运行时间",
-               align:"center"
-           },{
-               field:"startTime",
-               title:"开始时间",
-               align:"center"
-           }]
+            url: "/job/list",
+            responseHandler: function (res) {
+                return res.data;
+            },
+            uniqueId: "jobId",
+            columns: [{
+                checkbox: true
+            }, {
+                field: "jobId",
+                title: "id",
+                align: "center"
+            }, {
+                field: "jobName",
+                title: "名称",
+                align: "center"
+            }, {
+                field: "jobGroup",
+                title: "jobGroup",
+                align: "center"
+            }, {
+                field: "triggerName",
+                title: "triggerName",
+                align: "center"
+            }, {
+                field: "triggerGroupName",
+                title: "triggerGroupName",
+                align: "center"
+            }, {
+                field: "jobStatus",
+                title: "状态",
+                align: "center",
+                formatter: function (value) {
+                    return formatter(value);
+                }
+            }, {
+                field: "nextFireTime",
+                title: "下次运行时间",
+                align: "center"
+            }, {
+                field: "previousFireTime",
+                title: "上次运行时间",
+                align: "center"
+            }, {
+                field: "runTimes",
+                title: "运行时间",
+                align: "center"
+            }, {
+                field: "startTime",
+                title: "开始时间",
+                align: "center"
+            }, {
+                field: "operating",
+                title: "操作",
+                align: "center",
+                formatter: function (value, row, index) {
+                    var content = "<input id='operating_status_{0}' type='button' class='btn btn-default btn-sm'  value='{1}' {2}/>";
+                    var status = row.jobStatus;
+                    if (row.jobStatus != "PAUSED" && row.jobStatus != "NORMAL") {
+                        return content.format(formatter(row.jobStatus), "disabled")
+                    } else {
+                        status = row.jobStatus == "PAUSED" ? "NORMAL" : "PAUSED";
+                    }
+                    return content.format(row.jobId, formatter(status), " ");
+                }
+            }]
+        })
+        $("#jobList").on("click", "input[id^='operating_status_']", function () {
+            var jobId = $(this).attr("id").replace("operating_status_", "");
+            var row = $("#jobList").bootstrapTable("getRowByUniqueId", jobId)
+            console.log(row)
+            var operatType = row.jobStatus == "PAUSED" ? 1 : 0
+            $.post("/job/pauseOrResumeJob", {
+                "jobClassName": row.jobName,
+                "jobGroupName": row.jobGroup,
+                "operatType": operatType
+            }, function (result) {
+                if (result.isSuccess) {
+                    baseHome.successPrompt("操作成功")
+                }
+            }, "json")
         })
 
-        $("#quartz_toolbar>button").on('click',function () {
-            toastr.success($(this).prop("id"))
-            switch($(this).prop("id")){
-                case btn_add:
 
+        function formatter(value) {
+            // NORMAL正常,
+            // PAUSED暂停,
+            // COMPLETE完成,
+            // ERROR错误,
+            // BLOCKED阻塞
+            switch (value) {
+                case "PAUSED":
+                    return "暂停";
+                case "NORMAL":
+                    return "正常";
+                case "COMPLETE":
+                    return "完成";
+                case "ERROR":
+                    return "错误";
+                case "BLOCKED":
+                    return "阻塞";
+                default:
+                    return "未知状态";
+            }
+        }
+
+        $("#quartz_toolbar>button").on('click', function () {
+            toastr.success($(this).prop("id"))
+            switch ($(this).prop("id")) {
+                case btn_add:
                     break;
             }
 
         })
+
 
     })
 </script>

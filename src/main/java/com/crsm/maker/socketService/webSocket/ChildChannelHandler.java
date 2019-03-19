@@ -1,4 +1,4 @@
-package com.crsm.maker.socketService;
+package com.crsm.maker.socketService.webSocket;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;

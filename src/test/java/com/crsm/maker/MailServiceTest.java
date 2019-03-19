@@ -52,12 +52,12 @@ public class MailServiceTest {
     }
 
 
-    /*@Test
+    @Test
     public void testSimpleMail() throws Exception {
-        orderManager.sendSimpleMail("577290947@qq.com","test simple mail"," hello this is simple mail");
+        orderManager.sendSimpleMail("thisccr@gmail.com","测试内容"," 这是测试内容");
     }
 
-    @Test
+    /*@Test
     public void testHtmlMail() throws Exception {
 
         //创建邮件正文

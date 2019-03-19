@@ -17,7 +17,7 @@ public class BaseController {
         Map jsonObject = new HashMap<String, Object>();
         jsonObject.put("data", data);
         jsonObject.put("status", statusCode.getCode());
-        jsonObject.put("isSuccess", ISSUCCESS);
+        jsonObject.put("isSuccess", isSuccess);
         jsonObject.put("msg", statusCode.getMsg());
         return JSONObject.toJSONString(jsonObject);
     }
@@ -25,7 +25,7 @@ public class BaseController {
     private String buildMsg(ResultStatusCodeEnum statusCode, boolean isSuccess) {
         Map jsonObject = new HashMap<String, Object>();
         jsonObject.put("status", statusCode.getCode());
-        jsonObject.put("isSuccess", ISSUCCESS);
+        jsonObject.put("isSuccess", isSuccess);
         jsonObject.put("msg", statusCode.getMsg());
         return JSONObject.toJSONString(jsonObject);
     }

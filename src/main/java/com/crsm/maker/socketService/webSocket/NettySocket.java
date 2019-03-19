@@ -1,4 +1,4 @@
-package com.crsm.maker.socketService;
+package com.crsm.maker.socketService.webSocket;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -65,7 +65,6 @@ public class NettySocket {
      */
     @PreDestroy
     public void colse() {
-        log.info("关闭Netty1------------");
         boss.shutdownGracefully();
         work.shutdownGracefully();
     }

@@ -4,6 +4,13 @@ $(document).ready(function () {
 
     baseHome = {
         hostname: window.location.hostname,
+        staticResourcePort: 8090,
+        staticImgURL: function () {
+            if (this.hostname == "localhost") {
+                return "192.168.0.112:{0}".format(this.staticResourcePort)
+            }
+            return this.hostname + ":{0}".format(this.staticResourcePort)
+        },
         iconSwitch: $("#my-icon"),
         promptTitle: "信息",
         successPrompt: function () {
@@ -27,26 +34,30 @@ $(document).ready(function () {
             }
             toastr.warning(arguments[0], this.promptTitle)
         },
-        autoCloseTime:4000
+        autoCloseTime: 4000
     }
 
-    socket=new WebSocket("ws://localhost:10010/websocket")
-
-    socket.onmessage=function(event){
-        console.log(typeof event.data)
-        if(typeof event.data=="string"){
-            baseHome.successPrompt(event.data)
+    var registerWebSocketEvent=function(){
+        socket.onmessage = function (event) {
+            console.log(typeof event.data)
+            if (typeof event.data == "string") {
+                baseHome.successPrompt(event.data)
+            }
+            console.log(event.data)
         }
-        console.log(event.data)
-    }
-    socket.onopen=function(event){
-        console.log("打开通道")
-    }
-    socket.onclose=function(event){
-        console.log("关闭通道")
-    }
-    socket.onerror=function(event){
-        console.log("产生错误")
+        socket.onopen = function (event) {
+            console.log(socket.extensions)
+            console.log("打开通道")
+            console.log(baseHome.staticImgURL())
+
+        }
+        socket.onclose = function (event) {
+            console.log("关闭通道")
+        }
+        socket.onerror = function (event) {
+            console.log("产生错误")
+        }
+
     }
 
 
@@ -67,19 +78,6 @@ $(document).ready(function () {
         "hideMethod": "fadeOut"
     }
 
-    /*baseHome.toastrPrompt=function(){
-        if(arguments.length==0 ){
-            console.error("Error! params not norm")
-            return;
-        }
-        var promptType="success";
-        for (key in arguments){
-            if(typeof arguments[key]=="String"){
-
-            }
-        }
-    }*/
-
     /**
      * 页面初始化
      */
@@ -93,9 +91,9 @@ $(document).ready(function () {
         loadAll: true
     });
 
-    $(document).ajaxError(function(evt, request, settings){
-        var content=request.responseText;
-        var errorMsg=$(content).find("span").text();
+    $(document).ajaxError(function (evt, request, settings) {
+        var content = request.responseText;
+        var errorMsg = $(content).find("span").text();
         toastr.error(errorMsg, "请求错误")
     });
 
@@ -110,7 +108,7 @@ $(document).ready(function () {
             "position-bottom"
         ],
         autoHeight:true*/
-        sidebar: {
+        /*sidebar: {
             collapsed: "(min-width:200px)",
             expanded: "(min-width:100px)"
         },
@@ -125,7 +123,7 @@ $(document).ready(function () {
                 "<a href='#/'><i class='glyphicon glyphicon-filter'></i></a>",
                 "<a href='#/'><i class='glyphicon glyphicon-briefcase'></i></a>"
             ]
-        }
+        }*/
     }, {
         offCanvas: {
             pageNodetype: "section"
@@ -136,62 +134,80 @@ $(document).ready(function () {
     /**
      * 打开登陆页面
      */
-    $("#login").on("click",function(){
+    $("#login").on("click", function () {
         $.confirm({
-            title:"登录",
-            content:"url:/static/LoginTemplate",
-            theme: 'supervan',
-            draggable:false,
-            buttons:{
-                ok:{
-                    text:"登录",
-                    action:function(){
-                        var form=this.$content.find("#home_login");
-                        var validatorContext=form.data("bootstrapValidator")
+            title: "登录",
+            content: "url:/static/LoginTemplate",
+            //theme: 'supervan',
+            draggable: false,
+            buttons: {
+                ok: {
+                    text: "登录",
+                    action: function () {
+                        var form = this.$content.find("#home_login");
+                        var validatorContext = form.data("bootstrapValidator")
                         validatorContext.validate();
-                        if(!validatorContext.isValid()){
+                        //验证未通过
+                        if (!validatorContext.isValid()) {
                             return false;
                         }
-                        $.post("/user/login",form.serialize(),function(result){
-                            console.log(result)
+                        var loginValidator=false;
+                        $.ajax({
+                            url:"/user/login",
+                            async:false,
+                            method:"post",
+                            data:form.serialize(),
+                            dataType:"json",
+                            success: function (result) {
+                                if(result.isSuccess){
+                                    socket = new WebSocket("ws://{0}:10010/websocket?sessionId={1}".format(baseHome.hostname,result.data))
+                                    registerWebSocketEvent();
+                                    baseHome.successPrompt("登录成功")
+                                    loginValidator=true;
+                                }
+                            }
                         })
+                        if(!loginValidator){
+                            console.log("登录失败")
+                            return false;
+                        }
                     }
                 },
-                cancel:{
-                    text:"取消",
-                    action:function(){
+                cancel: {
+                    text: "取消",
+                    action: function () {
 
                     }
                 }
             },
-            onContentReady:function(){
-                var self=this;
+            onContentReady: function () {
+                var self = this;
                 this.$content.find("#home_login").bootstrapValidator({
                     feedbackIcons: {
                         valid: 'glyphicon glyphicon-ok',
                         invalid: 'glyphicon glyphicon-remove',
                         validating: 'glyphicon glyphicon-refresh'
                     },
-                    fields:{
-                        userName:{
-                            message:"请输入正确的用户名",
-                            validators:{
-                                notEmpty:"请输入用户名",
-                                stringLength:{
-                                    min:1,
-                                    max:8,
-                                    message:"用户名最小长度为1，最大长度为8"
+                    fields: {
+                        userName: {
+                            message: "请输入正确的用户名",
+                            validators: {
+                                notEmpty: "请输入用户名",
+                                stringLength: {
+                                    min: 1,
+                                    max: 8,
+                                    message: "用户名最小长度为1，最大长度为8"
                                 }
                             }
                         },
-                        userPassword:{
-                            message:"请输入正确的密码",
-                            validators:{
-                                notEmpty:"请输入密码",
-                                stringLength:{
-                                    min:1,
-                                    max:8,
-                                    message:"密码名最小长度为1，最大长度为8"
+                        userPassword: {
+                            message: "请输入正确的密码",
+                            validators: {
+                                notEmpty: "请输入密码",
+                                stringLength: {
+                                    min: 1,
+                                    max: 8,
+                                    message: "密码名最小长度为1，最大长度为8"
                                 }
                             }
                         }
@@ -368,6 +384,11 @@ $(document).ready(function () {
         $body.appendChild($elem);
     };
 })
+
+function handler(e) {
+    //doSomething(); // do something here
+}
+document.addEventListener('mousewheel', handler, {passive: true});
 
 
 $(window).scroll(function () {
