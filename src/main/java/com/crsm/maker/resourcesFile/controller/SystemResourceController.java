@@ -13,15 +13,14 @@ import com.crsm.maker.user.service.ISysUserService;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 
 /**
@@ -59,6 +58,7 @@ public class SystemResourceController extends BaseController {
             log.warn("未获取文件");
             return "文件上传失败";
         }
+
         String upuserName="upFile";
         String fileName=file.getOriginalFilename();
         int isExist=iSystemResourceService.count(new QueryWrapper<SysResource>().eq("res_name",fileName));
@@ -70,7 +70,7 @@ public class SystemResourceController extends BaseController {
         if(!fileData.exists()){
             fileData.mkdirs();
         }
-        filePath=filePath+fileName;
+        filePath+=fileName;
         SysResource sResource=new SysResource();
         sResource.setResName(fileName);
         sResource.setResType(1);
@@ -80,8 +80,23 @@ public class SystemResourceController extends BaseController {
         sResource.setResPath(filePath);
         iSystemResourceService.save(sResource);
         try {
+            switch (file.getContentType()){
+                case MediaType.TEXT_PLAIN_VALUE: //文本文件
+                    break;
+                case MediaType.IMAGE_PNG_VALUE://图片类型
+                    break;
+            }
+            System.out.println("内容类型："+file.getContentType());
             FileOutputStream fileOutputStream=new FileOutputStream(filePath);
-            fileOutputStream.write(file.getBytes());
+            //获取输入流
+            InputStream is=file.getInputStream();
+            byte[] buff = new byte[4096];
+            int offset = 0;
+            //将数据读取至 buff
+            while((offset = is.read(buff)) != -1) {
+                fileOutputStream.write(buff);
+            }
+            is.close();
             fileOutputStream.flush();
             fileOutputStream.close();
         } catch (IOException e) {
