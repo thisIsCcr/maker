@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.crsm.maker.resourcesFile.entity.SysResource;
 
+import java.util.List;
+
 /**
  * <p>
  * 系统资源表 服务类
@@ -19,5 +21,9 @@ public interface ISystemResourceService extends IService<SysResource> {
 
     Integer saveAndReturnId(SysResource sysResource);
 
-
+    /**
+     * 使用自定义sql wrapper
+     * @return
+     */
+    List<SysResource> getAllMusicInfo();
 }

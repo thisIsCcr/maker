@@ -63,9 +63,7 @@ public class FileAudioController extends BaseController {
      */
     @GetMapping("/getAllLrcFileInfo")
     public String getAllLrcFileInfo() {
-        List list=iSystemResourceService.list(new QueryWrapper<SysResource>()
-                .likeLeft("res_name", ".lrc")
-                .notInSql("id", "SELECT audio_lrc_id FROM file_audio"));
+        List list=iSystemResourceService.getAllMusicInfo();
         return success(list);
     }
 
@@ -75,9 +73,9 @@ public class FileAudioController extends BaseController {
      */
     @GetMapping("/getAllAudioFileInfo")
     public String getAllAudioFileInfo() {
-        List list=iSystemResourceService.list(new QueryWrapper<SysResource>()
-                .eq("res_type", "0")
-                .notInSql("id", "SELECT `resource_id` FROM file_audio"));
+        List list=iSystemResourceService.list(new QueryWrapper<SysResource>().lambda()
+                .eq(SysResource::getResType, "0")
+                .notInSql(SysResource::getId, "SELECT `resource_id` FROM file_audio"));
         return success(list);
     }
 

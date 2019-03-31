@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.crsm.maker.mail.OrderManager;
 import com.crsm.maker.quartz.BaseJob;
-import com.crsm.maker.resourcesFile.entity.FileAudio;
 import com.crsm.maker.resourcesFile.entity.SysResource;
 import com.crsm.maker.resourcesFile.mapper.FileAudioMapper;
 import com.crsm.maker.resourcesFile.service.ISystemResourceService;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.thymeleaf.TemplateEngine;
-
-import java.util.List;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -43,10 +40,7 @@ public class MailServiceTest {
 
     @Test
     public void getAllJob() throws SchedulerException {
-        List<FileAudio> fileAudios=fileAudioMapper.getAllAudioInfo();
-        for(FileAudio item:fileAudios){
-            System.out.println(item.toString());
-        }
+        iSystemResourceService.getAllMusicInfo();
     }
 
     @Test

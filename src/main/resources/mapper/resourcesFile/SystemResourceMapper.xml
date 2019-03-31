@@ -50,8 +50,21 @@
                 ORDER BY id DESC
     </select>
 
-
-
+    <select id="getAllMusicInfo" resultType="com.crsm.maker.resourcesFile.entity.SysResource">
+        SELECT
+          id,
+          res_name,
+          res_path,
+          res_type,
+          res_isStop,
+          res_createTime,
+          res_updateTime,
+          user_id,
+          res_description
+        FROM
+          sys_resource sr
+        ${ew.customSqlSegment}
+    </select>
 
 
 </mapper>

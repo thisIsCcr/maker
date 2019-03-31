@@ -13,7 +13,7 @@ $(document).ready(function () {
             if (this.hostname == "localhost" || this.hostname == "192.168.0.196") {
                 return "http://192.168.0.112"
             }
-            return this.hostname;
+            return "";
         },
         musicData:[],
         iconSwitch: $("#my-icon"),
