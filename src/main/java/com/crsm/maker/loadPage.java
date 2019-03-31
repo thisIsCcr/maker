@@ -32,6 +32,7 @@ public class loadPage extends BaseController {
         return "quartzJobList";
     }
 
+    @RequiresAuthentication
     @RequestMapping("permission")
     public String getPermissionPage(){
         return "permission";
@@ -40,6 +41,11 @@ public class loadPage extends BaseController {
     @RequestMapping("fileResource")
     public String getresourceFilePage(){
         return "fileResource";
+    }
+
+    @RequestMapping("fileAudioManager")
+    public String fileAudioManager(){
+        return "fileAudioManager";
     }
 
 }

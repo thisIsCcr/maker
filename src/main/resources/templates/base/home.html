@@ -1,84 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 
-	<head>
-		<meta charset="UTF-8">
-		<title>home</title>
-		<meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
-    	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-		<link href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
-		<link href="static/jquery-mmenu/jquery.mmenu.all.css" rel="stylesheet" />
-		<link href="static/jqeury-confirm/jquery-confirm.min.css" rel="stylesheet">
-		<link href="static/css/hamburgers.min.css" rel="stylesheet"/>
-		<link href="static/css/home/home.css" rel="stylesheet"/>
-		<link href="static/bootsstrap-validator/css/bootstrapValidator.min.css" rel="stylesheet" />
-		<link href="static/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css" rel="stylesheet">
-		<link href="static/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
-		<link href="static/toastr/toastr.min.css" rel="stylesheet">
+<head>
+    <meta charset="UTF-8">
+    <title>如果不是真的喜欢，谁愿意当舔狗呢？</title>
+    <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <link href="static/img/QQ图片20181218162911.gif" rel="icon">
+    <link href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/jquery-mmenu/jquery.mmenu.all.css" rel="stylesheet"/>
+    <link href="static/jqeury-confirm/jquery-confirm.min.css" rel="stylesheet">
+    <link href="static/css/hamburgers.min.css" rel="stylesheet"/>
+    <link href="static/css/home/home.css" rel="stylesheet"/>
+    <link href="static/bootsstrap-validator/css/bootstrapValidator.min.css" rel="stylesheet"/>
+    <link href="static/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css" rel="stylesheet">
+    <link href="static/bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet">
+    <link href="static/toastr/toastr.min.css" rel="stylesheet">
+    <link href="static/APlayer/APlayer.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+<div id="page" class="container-fluid">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <div id="my-icon" class="hamburger hamburger--collapse" type="button">
+                      <span class="hamburger-box">
+                         <span class="hamburger-inner"></span>
+                      </span>
+                </div>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">Link</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                           aria-haspopup="true" aria-expanded="false">待处理消息(测试模板 <span class="badge">3</span><span
+                                class="caret"></span> </a></a>
+                        <ul class="dropdown-menu dropdownAnimation">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right " id="login_template">
+                    <li>
+                        <ul class="loginAndLogOut">
+                            <li id="login_li">
+                                <button type="button" id="login" class="btn btn-default navbar-btn">对暗号o(￣ヘ￣o＃)</button>
+                            </li>
+                            <li id="login_success_userInfo">
+                                <ul class="nav navbar-nav" id="user_avator">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button"
+                                           aria-haspopup="true" aria-expanded="false">
+                                            <img alt="头像" id="user_avator_img" class="img-circle"
+                                                 style="max-width: 50px"
+                                                 src="http://192.168.0.112/systemResource/img/defaultAvator.jpg"/>
+                                            名称
+                                        </a>
+                                        <ul class="dropdown-menu dropdownAnimation">
+                                            <li><a href="javaScript:void(0)" onclick="baseHome.logout()">退出登录</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <div id="tabContainer"></div>
+    <nav id="my-menu">
+        <ul id="menu-No0">
+        </ul>
+    </nav>
+</div>
 
 
+<!--aplayer(HTML5音乐播放器)-->
+<div id="aplayer"></div>
 
-	</head>
+</body>
+<script src="static/jquery/jquery-3.1.1.min.js"></script>
+<script src="static/jquery/jquery.easing.min.js"></script>
+<link href="static/fontawesome-free/css/all.min.css" rel="stylesheet">
+<script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="static/jqeury-confirm/jquery-confirm.min.js"></script>
+<script src="static/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="static/bootstrap-table/bootstrap-table-zh-CN.js"></script>
+<script src="static/jquery-mmenu/jquery.mmenu.all.js"></script>
+<script src="static/bootsstrap-validator/js/bootstrapValidator.min.js"></script>
+<script src="static/bootsstrap-validator/js/language/zh_CN.js"></script>
+<script src="static/js/bootstrap-tab.js"></script>
+<!--<script src="static/js/Chart.min.js"></script>-->
+<script src="static/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
+<script src="static/freewall/freewall.js"></script>
 
-	<body>
-		<div id="my-wrapper">
-			<div id="my-haeder">
-				<nav class="navbar navbar-static-top my-navbar" role="navigation">
-					<div class="container-fluid">
-						<div class="collapse navbar-collapse" id="example-navbar-collapse">
-							<ul class="nav navbar-nav">
-								<li class="active">
-									<div id="my-icon" class="hamburger hamburger--collapse" type="button">
-								      <span class="hamburger-box">
-								         <span class="hamburger-inner"></span>
-								      </span>
-								   </div>
-								</li>
-								<li>
-									<a href="#" id="test1">SVN</a>
-								</li>
-								<li>
-									<a href="#">Asp.Net</a>
-								</li>
-							</ul>
-							<button type="button" id="login" class="btn btn-default navbar-btn navbar-right">后门入口</button>
-						</div>
-					</div>
-				</nav>
-			</div>
-			<div id="my-content">
-				<div id="tabContainer"></div>
-			</div>
-			<div id="my-footer"></div>
-		</div>
-
-		<nav id="my-menu">
-			<ul id="menu-No0">
-			</ul>
-		</nav>
-
-	</body>
-	<script src="static/jquery/jquery-3.1.1.min.js"></script>
-	<script src="static/jquery/jquery.easing.min.js"></script>
-	<link href="static/fontawesome-free/css/all.min.css" rel="stylesheet">
-	<script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-	<script src="static/jqeury-confirm/jquery-confirm.min.js"></script>
-	<script src="static/bootstrap-table/bootstrap-table.min.js"></script>
-	<script src="static/bootstrap-table/bootstrap-table-zh-CN.js"></script>
-	<script src="static/jquery-mmenu/jquery.mmenu.all.js"></script>
-	<script src="static/bootsstrap-validator/js/bootstrapValidator.min.js"></script>
-	<script src="static/bootsstrap-validator/js/language/zh_CN.js"></script>
-	<script src="static/js/bootstrap-tab.js"></script>
-	<!--<script src="static/js/Chart.min.js"></script>-->
-	<script src="static/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js"></script>
-	<script src="static/freewall/freewall.js"></script>
-
-	<script src="static/bootstrap-fileinput/js/plugins/piexif.min.js"></script>
-	<script src="static/bootstrap-fileinput/js/plugins/sortable.min.js"></script>
-	<script src="static/bootstrap-fileinput/js/fileinput.min.js"></script>
-	<script src="static/bootstrap-fileinput/js/locales/zh.js"></script>
-	<script src="static/toastr/toastr.min.js"></script>
-
-	<script type="text/javascript" src="static/js/home/home.js" ></script>
+<script src="static/bootstrap-fileinput/js/plugins/piexif.min.js"></script>
+<script src="static/bootstrap-fileinput/js/plugins/sortable.min.js"></script>
+<script src="static/bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="static/bootstrap-fileinput/js/locales/zh.js"></script>
+<script src="static/toastr/toastr.min.js"></script>
+<script src="static/APlayer/APlayer.min.js"></script>
+<script src="static/iconfont/font_qvm53c3gam/iconfont.js"></script>
+<script type="text/javascript" src="static/js/home/home.js"></script>
 
 </html>

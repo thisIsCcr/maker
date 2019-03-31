@@ -1,4 +1,4 @@
-package com.crsm.maker.config;
+package com.crsm.maker.config.shiro;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.crsm.maker.user.entity.SysTree;
@@ -101,10 +101,11 @@ public class MyShiroRealm extends AuthorizingRealm {
      */
     public static void main(String[] args) {
         String algorithmName = "md5";
-        String username = "ccr";
+        String username = "visitor";
         String password = "123456";
         String salt1 = username;
         String salt2 = new SecureRandomNumberGenerator().nextBytes().toHex();
+        //String salt2 = "1e2867e24a9d69536e1c16fa398a7570";
         int hashIterations = 1024;
         SimpleHash hash = new SimpleHash(algorithmName, password, salt1 + salt2, hashIterations);
         String encodedPassword = hash.toHex();

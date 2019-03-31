@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crsm.maker.resourcesFile.mapper.FileAudioMapper">
+
+
+    <select id="getAllAudioInfo" resultType="com.crsm.maker.resourcesFile.entity.FileAudio">
+         SELECT
+          fa.`id`,
+          fa.`audio_name`,
+          fa.audio_artist,
+          fa.audio_create,
+          fa.audio_update,
+          sre.res_path AS audioPath ,
+          (SELECT
+            sr.`res_path`
+          FROM
+            `sys_resource` sr
+          WHERE sr.`id` = fa.audio_cover_id) AS coverPath,
+          (SELECT
+            sr.`res_path`
+          FROM
+            `sys_resource` sr
+          WHERE sr.`id` = fa.audio_lrc_id) AS lrcPath
+        FROM
+          `file_audio` fa
+          LEFT JOIN `sys_resource` sre ON sre.`id`=fa.`resource_id`
+    </select>
+
+</mapper>

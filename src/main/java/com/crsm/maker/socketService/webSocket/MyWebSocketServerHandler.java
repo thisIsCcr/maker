@@ -13,18 +13,13 @@ import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * creat by Ccr on 2018/11/27
+ * WebSocket处理
  **/
 @Slf4j
-public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
-
-    private static final Logger logger = Logger.getLogger(WebSocketServerHandshaker.class.getName());
+public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object>{
 
     private WebSocketServerHandshaker handshaker;
 
@@ -40,7 +35,9 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // 添加
         Global.group.add(ctx.channel());
-        System.out.println("客户端与服务端连接开启：" + ctx.channel().remoteAddress().toString());
+        System.out.println("当前连接人数："+Global.group.size());
+        log.info("客户端与服务端连接开启：" + ctx.channel().remoteAddress().toString());
+
     }
 
     /**
@@ -48,9 +45,10 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("当前连接人数："+Global.group.size());
         // 移除
         Global.group.remove(ctx.channel());
-        System.out.println("客户端与服务端连接关闭：" + ctx.channel().remoteAddress().toString());
+        log.info("客户端与服务端连接关闭：" + ctx.channel().remoteAddress().toString());
     }
 
     /**
@@ -66,7 +64,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
             handleHttpRequest(ctx, ((FullHttpRequest) msg));
             // WebSocket接入
         } else if (msg instanceof WebSocketFrame) {
-            if ("anzhuo".equals(ctx.attr(AttributeKey.valueOf("type")).get())) {
+            if ("anzhuo".equals(ctx.channel().attr(AttributeKey.valueOf("type")).get())) {
                 handlerWebSocketFrame(ctx, (WebSocketFrame) msg);
             } else {
                 handlerWebSocketFrame2(ctx, (WebSocketFrame) msg);
@@ -94,12 +92,8 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         // 返回应答消息
         String request = ((TextWebSocketFrame) frame).text();
         System.out.println("服务端2收到：" + request);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(String.format("%s received %s", ctx.channel(), request));
-        }
-
+        log.info(String.format("%s received %s", ctx.channel(), request));
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString() + ctx.channel().id() + "：" + request);
-
 
         // 群发
         Global.group.writeAndFlush(tws);
@@ -133,9 +127,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         // 返回应答消息
         String request = ((TextWebSocketFrame) frame).text();
         System.out.println("服务端收到：" + request);
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(String.format("%s received %s", ctx.channel(), request));
-        }
+        log.info(String.format("%s received %s", ctx.channel(), request));
         TextWebSocketFrame tws = new TextWebSocketFrame(new Date().toString() + ctx.channel().id() + "：" + request);
         // 群发
         Global.group.writeAndFlush(tws);
@@ -151,7 +143,7 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
      */
     private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) {
         // 如果HTTP解码失败，返回HHTP异常
-        if (!req.getDecoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
+        if (!req.decoderResult().isSuccess() || (!"websocket".equals(req.headers().get("Upgrade")))) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.BAD_REQUEST));
             return;
         }
@@ -159,19 +151,25 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
         HttpMethod method = req.method();
         String uri = req.uri();
         QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri);
-        Map<String, List<String>> parameters = queryStringDecoder.parameters();
-        System.out.println(parameters.get("sessionId"));
+
+        //获取sessionId
+        /*Map<String, List<String>> parameters = queryStringDecoder.parameters();
+        //连接错误，拒绝请求
+        if (parameters.get("sessionId")==null || parameters.get("sessionId").isEmpty()) {
+            sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.FORBIDDEN));
+            return;
+        }*/
 
         if (method == HttpMethod.GET && "/websocketTwo".equals(uri)) {
             //....处理
-            ctx.attr(AttributeKey.valueOf("type")).set("anzhuo");
+            ctx.channel().attr(AttributeKey.valueOf("type")).set("anzhuo");
         } else if (method == HttpMethod.GET && "/websocket".equals(uri)) {
             //...处理
-            ctx.attr(AttributeKey.valueOf("type")).set("live");
+            ctx.channel().attr(AttributeKey.valueOf("type")).set("live");
         }
         // 构造握手响应返回
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-                "ws://" + req.headers().get(HttpHeaders.Names.HOST) + uri, null, true);
+                "ws://" + req.headers().get(HttpHeaderNames.HOST) + uri, null, false);
         //创建握手消息
         handshaker = wsFactory.newHandshaker(req);
         if (handshaker == null) {
@@ -184,14 +182,14 @@ public class MyWebSocketServerHandler extends SimpleChannelInboundHandler<Object
 
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, DefaultFullHttpResponse res) {
         // 返回应答给客户端
-        if (res.getStatus().code() != 200) {
-            ByteBuf buf = Unpooled.copiedBuffer(res.getStatus().toString(), CharsetUtil.UTF_8);
+        if (res.status().code() != 200) {
+            ByteBuf buf = Unpooled.copiedBuffer(res.status().toString(), CharsetUtil.UTF_8);
             res.content().writeBytes(buf);
             buf.release();
         }
         // 如果是非Keep-Alive，关闭连接
         ChannelFuture f = ctx.channel().writeAndFlush(res);
-        if (!HttpHeaders.isKeepAlive(req) || res.getStatus().code() != 200) {
+        if (!HttpUtil.isKeepAlive(req) || res.status().code() != 200) {
             f.addListener(ChannelFutureListener.CLOSE);
         }
     }

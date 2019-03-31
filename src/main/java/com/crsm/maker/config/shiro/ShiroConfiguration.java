@@ -1,4 +1,4 @@
-package com.crsm.maker.config;
+package com.crsm.maker.config.shiro;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
@@ -47,12 +47,11 @@ public class ShiroConfiguration {
         //配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了，登出后跳转配置的loginUrl
         filterChainDefinitionMap.put("/logout", "logout");
         // 配置不会被拦截的链接 顺序判断
-        filterChainDefinitionMap.put("/static/**", "anon");
+        /*filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/ajaxLogin", "anon");
-        filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/login", "anon");*/
         filterChainDefinitionMap.put("/**", "anon");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，后台仅返回json数据
-        bean.setLoginUrl("/unauth");
         bean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return bean;
     }
@@ -89,7 +88,10 @@ public class ShiroConfiguration {
     @Bean
     public SessionValidationScheduler sessionValidationScheduler(){
         ExecutorServiceSessionValidationScheduler scheduler=new ExecutorServiceSessionValidationScheduler();
-        scheduler.setInterval(3600000);
+        scheduler.setInterval(60000);
+        if(scheduler.isEnabled()){
+            log.info("启用Session验证失效···");
+        }
         return scheduler;
     }
 
@@ -132,7 +134,7 @@ public class ShiroConfiguration {
         //会话验证时间
         mySessionManager.setSessionValidationScheduler(sessionValidationScheduler());
         //会话失效删除
-        mySessionManager.setDeleteInvalidSessions(true);
+        //mySessionManager.setDeleteInvalidSessions(false);
         //自定义管理器
         mySessionManager.setCacheManager(cacheManager());
         //添加添加Dao缓存支持

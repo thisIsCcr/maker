@@ -7,8 +7,10 @@ import com.crsm.maker.user.entity.SysUser;
 import com.crsm.maker.user.service.ISysTreeService;
 import com.crsm.maker.user.service.ISysUserService;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,5 +40,26 @@ public class logController extends BaseController {
         System.out.println("是否登录："+currentSubject.isAuthenticated());
         List<SysTree> list=iSysTreeService.getMenuData();
         return success(list);
+    }
+
+    /**
+     * 当前请求已经过登录认证
+     * @return
+     */
+    @GetMapping("/getAuthenicatedResult")
+    public String getAuthenicatedResult(){
+        Subject subject=SecurityUtils.getSubject();
+        return success(subject.isAuthenticated());
+    }
+
+    /**
+     * 获取当前登录用户信息
+     * @return
+     */
+    @RequiresAuthentication
+    @GetMapping("/getPrincipal")
+    public String getPrincipal(){
+        Subject subject=SecurityUtils.getSubject();
+        return success(subject.getPrincipal());
     }
 }

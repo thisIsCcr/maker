@@ -2,6 +2,30 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.crsm.maker.resourcesFile.mapper.SystemResourceMapper">
 
+    <insert id="saveAndReturnId" useGeneratedKeys="true" keyProperty="id" parameterType="com.crsm.maker.resourcesFile.entity.SysResource">
+        INSERT INTO `maker`.`sys_resource` (
+          `res_name`,
+          `res_path`,
+          `res_type`,
+          `res_isStop`,
+          `res_createTime`,
+          `res_updateTime`,
+          `user_id`,
+          `res_description`
+        )
+        VALUES
+          (
+            #{sysSue.resName},
+            #{sysSue.resPath},
+            #{sysSue.resType},
+            #{sysSue.resIsstop},
+            #{sysSue.resCreatetime},
+            #{sysSue.resUpdatetime},
+            #{sysSue.userId},
+            #{sysSue.resDescription}
+          );
+    </insert>
+
 
     <select id="selectPageVo" resultType="com.crsm.maker.resourcesFile.entity.SysResource">
            SELECT * FROM `sys_resource`
@@ -25,4 +49,9 @@
            </where>
                 ORDER BY id DESC
     </select>
+
+
+
+
+
 </mapper>

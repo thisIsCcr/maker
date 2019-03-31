@@ -3,10 +3,8 @@ package com.crsm.maker.resourcesFile.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
@@ -20,7 +18,6 @@ import java.time.LocalDateTime;
  * @author Ccr
  * @since 2018-12-25
  */
-@NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -71,6 +68,11 @@ public class SysResource implements Serializable {
      * 上传人
      */
     private Integer userId;
+
+    /**
+     * 描述
+     */
+    private String resDescription;
 
 
 }

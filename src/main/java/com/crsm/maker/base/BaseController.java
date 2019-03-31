@@ -1,6 +1,11 @@
 package com.crsm.maker.base;
 
 import com.alibaba.fastjson.JSONObject;
+import com.crsm.maker.user.entity.SysUser;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,9 +14,13 @@ import java.util.Map;
  * Created  by Ccr on 2019/1/14
  * JSON消息模板
  **/
+@Slf4j
 public class BaseController {
+
     private boolean ISSUCCESS = true;
+
     private boolean ISFAIL = false;
+
 
     private String buildMsg(Object data, ResultStatusCodeEnum statusCode, boolean isSuccess) {
         Map jsonObject = new HashMap<String, Object>();
@@ -70,6 +79,35 @@ public class BaseController {
     }
 
 
+    /**
+     * 是否登录
+     *
+     * @return
+     */
+    public boolean islogin() {
+        Subject subject = SecurityUtils.getSubject();
+        return subject.isAuthenticated();
+    }
 
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return
+     */
+    public SysUser currentUserInfo() {
+        Subject subject = SecurityUtils.getSubject();
+        SysUser sysUser = subject.getPrincipals() != null ? (SysUser) subject.getPrincipal() : null;
+        return sysUser;
+    }
+
+    /**
+     * 获取当前Session如果没有，则创建
+     *
+     * @return
+     */
+    public Session getcurrentSession() {
+        Subject subject = SecurityUtils.getSubject();
+        return subject.getSession(true);
+    }
 
 }

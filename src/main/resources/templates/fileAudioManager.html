@@ -1,0 +1,194 @@
+<style>
+    .addPagemaxHeight {
+        max-height: 777px;
+        overflow: auto;
+    }
+
+    .marginright {
+        transition: all 0.5s linear;
+    }
+
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        /**
+         * 添加事件
+         */
+        $("#toolbar_audio>button").on("click", function () {
+            switch ($(this).attr("id")) {
+                case "btn_add":
+                    pageAudio.add();
+                    break;
+            }
+        })
+
+
+        var pageAudio = {
+            iconSelect: '<div class="col-md-4 col-xs-4">\n' +
+            '            <a class="thumbnail musicCoverListGroup" href="javascript:void(0)" id="iconCover_{0}"  >\n' +
+            '                <img src="{1}" alt="图片" data-value="{2}" />\n' +
+            '            </a>\n' +
+            '        </div>',
+            add: function () {
+                var baseSelf = this;
+                $.confirm({
+                    columnClass: 'col-md-12',
+                    title: "添加音乐",
+                    content: "url:static/audioTemplate",
+                    onContentReady: function () {
+                        var self = this;
+                        var iSelectDiv = this.$content.find("#icon_select_div");
+                        var coverImg = this.$content.find("#cover_imgage");
+                        $.get("/fileImage/getCoverImageInfo", function (result) {
+                            if (result.isSuccess) {
+                                var data = result.data;
+                                var content = "";
+                                for (key in data) {
+                                    content += baseSelf.iconSelect.format(data[key].id, data[key].resPath, data[key].id)
+                                }
+                                iSelectDiv.find("div[class='row']").append(content);
+                                self.$content.find(".musicCoverListGroup").on("click", function () {
+                                    var thisContext = $(this).find("img")
+                                    coverImg.find("img").attr("src", thisContext.attr("src"));
+                                    coverImg.find("img").attr("data-value", thisContext.attr("data-value"));
+                                })
+                            }
+                        }, "json");
+                        $.get("/fileAudio/getAllLrcFileInfo", function (result) {
+                            if (result.isSuccess) {
+                                if (result.data.length > 0) {
+                                    var data = result.data;
+                                    var content = "";
+                                    for (key in data) {
+                                        content += "<option value='{0}'>{1}</option>".format(data[key].id, data[key].resName);
+                                    }
+                                    self.$content.find("#lrc_select").append(content);
+                                }
+                            }
+                        }, "json");
+                        $.get("/fileAudio/getAllAudioFileInfo", function (result) {
+                            if (result.isSuccess) {
+                                if (result.data.length > 0) {
+                                    var data = result.data;
+                                    var content = "";
+                                    for (key in data) {
+                                        content += "<option value='{0}'>{1}</option>".format(data[key].id, data[key].resName);
+                                    }
+                                    self.$content.find("#audio_select").append(content);
+                                }
+                            }
+                        }, "json");
+
+                        //添加事件
+                        coverImg.on("click", function () {
+                            iSelectDiv.toggle(iSelectDiv.css("display"))
+                            $(this).parent().parent().toggleClass(function () {
+                                if (!$(this).is(".col-lg-offset-4")) {
+                                    $(this).removeClass("col-lg-offset-4")
+                                    return "col-lg-offset-2";
+                                } else {
+                                    $(this).removeClass("col-lg-offset-2")
+                                    return "col-lg-offset-4";
+                                }
+                            })
+                        })
+                    },
+                    buttons: {
+                        ok: {
+                            text: "保存",
+                            action: function () {
+                                var self = this.$content;
+                                var description = self.find("#audio_description").val();
+                                var lrcId = self.find("#lrc_select").val();
+                                var coverId = self.find("#cover_imgage").find("img").attr("data-value");
+                                var audioId = self.find("#audio_select").val();
+                                var audioArtist = self.find("#audio_artist").val()
+                                var audioName = self.find("#audio_name").val()
+                                var addConten = {
+                                    //描述
+                                    description: description,
+                                    //音乐名称
+                                    audioName: audioName,
+                                    //歌词
+                                    audioLrcId: lrcId,
+                                    //封面
+                                    audioCoverId: coverId,
+                                    //音频
+                                    resourceId: audioId,
+                                    //艺人名称
+                                    audioArtist: audioArtist
+                                };
+                                if (!audioId || !audioArtist || !audioName) {
+                                    baseHome.warningPrompt("请输入必要参数")
+                                    return false;
+                                }
+                                $.ajax({
+                                    url: "/fileAudio/addMusic",
+                                    method: "post",
+                                    headers: {
+                                        Accept: "application/json; charset=utf-8"
+                                    },
+                                    contentType: "application/json",
+                                    data: JSON.stringify(addConten),
+                                    dataType: "json",
+                                    success: function (result) {
+                                        if (result.isSuccess)
+                                            baseHome.successPrompt("添加成功")
+                                        else
+                                            baseHome.errorPrompt("添加失败")
+                                    }
+                                })
+
+                            }
+                        },
+                        cancel: {
+                            text: "取消"
+                        }
+                    }
+                })
+            },
+            iconUpdate: function () {
+
+            }
+        }
+
+    })
+
+</script>
+
+
+<div class="container-fluid Icell">
+    <div class="page-header">
+        <div id="toolbar_audio" class="btn-group">
+            <button id="btn_add" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+            </button>
+            <button id="btn_edit" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
+            </button>
+            <button id="btn_delete" type="button" class="btn btn-default">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-md-offset-2 ">
+            <div class="thumbnail">
+                <a class="thumbnail" href="javascript:void(0)">
+                    <img src="http://192.168.0.112/systemResource/img/defaultAvator.jpg" alt="...">
+                </a>
+                <div class="caption">
+                    <h3>Thumbnail label</h3>
+                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida
+                        at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                    <!--<p><a href="#" class="btn btn-primary" role="button">Button</a>
+                        <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</div>

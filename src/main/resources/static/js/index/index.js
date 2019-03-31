@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('#table').bootstrapTable({
+	/*$('#table').bootstrapTable({
 		url: "/getAllUser",
 		cache: false,
 		search: true,
@@ -50,14 +50,23 @@ $(document).ready(function() {
 			title: '创建时间',
 			align: "center"
 		}]
-	});
+	});*/
 
 	$("#uploadFile").fileinput({
         language: 'zh',//中文
 		maxFileCount:10,//最大同时上传个数
         uploadUrl:"/file/multipartFile",//文件上传地址
 		enctype:"multipart/form-data"//编码格式
+        //uploadExtraData:{}//添加额外数据
 	});
+
+
+    $("#submit_url").on("click",function(){
+        var value=$("#setting_static_loadURL").val();
+        console.log("settingValu:"+value)
+        baseHome.settingStaticLoadURL=value;
+        console.log(baseHome.staticImgURL())
+    })
 
     var $usager=$("#usager");
 	//cpu使用率监控
@@ -74,7 +83,5 @@ $(document).ready(function() {
 			}
 		});
 	}, 1300)*/
-
-
 
 })

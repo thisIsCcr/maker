@@ -19,6 +19,7 @@ public class MyControllerAdvice extends BaseController {
      * @param ex
      * @return
      */
+    @SuppressWarnings("all")
     @ResponseBody
     @ExceptionHandler(value = Exception.class)
     public ModelAndView errorHandler(Exception ex){
@@ -35,9 +36,11 @@ public class MyControllerAdvice extends BaseController {
      * @param ex
      * @return
      */
+    @SuppressWarnings("all")
     @ResponseBody
     @ExceptionHandler(value = ShiroException.class)
     public ModelAndView AuthorizationException(ShiroException ex){
+        ex.printStackTrace();
         ModelAndView modelAndView=new ModelAndView();
         modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         modelAndView.setViewName("error");

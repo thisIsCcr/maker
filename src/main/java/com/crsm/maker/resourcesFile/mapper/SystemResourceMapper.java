@@ -22,4 +22,6 @@ public interface SystemResourceMapper extends BaseMapper<SysResource> {
 
     public IPage<SysResource> selectPageVo(Page page,@Param("sysSue")SysResource sysSue);
 
+     Integer saveAndReturnId(@Param("sysSue")SysResource sysSue);
+
 }

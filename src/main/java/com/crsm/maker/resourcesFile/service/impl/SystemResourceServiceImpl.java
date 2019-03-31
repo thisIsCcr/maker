@@ -26,4 +26,9 @@ public class SystemResourceServiceImpl extends ServiceImpl<SystemResourceMapper,
     public IPage<SysResource> selectPageVo(Page<SysResource> page,SysResource sysResource) {
         return systemResourceMapper.selectPageVo(page,sysResource);
 }
+
+    @Override
+    public Integer saveAndReturnId(SysResource sysResource) {
+        return systemResourceMapper.saveAndReturnId(sysResource);
+    }
 }

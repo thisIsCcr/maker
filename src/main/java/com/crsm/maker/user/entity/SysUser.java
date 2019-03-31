@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -78,18 +78,22 @@ public class SysUser implements Serializable {
     /**
      * 更新时间
      */
-    private LocalDate updateDate;
+    private LocalDateTime updateDate;
 
     /**
      * 创建时间
      */
-    private LocalDate cartData;
+    private LocalDateTime cartData;
 
     /**
      * 盐值
      */
     private String usrSalt;
 
+    /**
+     * 获取登录盐
+     * @return
+     */
     public String getCredentialsSalt() {
         return this.usrName + this.usrSalt;
     }

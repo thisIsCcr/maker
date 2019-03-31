@@ -1,86 +1,162 @@
 html,
 body {
-	width: 100%;
-	height: 100%;
-	background-color: rgb(243, 243, 243);
-	/*background-repeat: no-repeat;
-	background-attachment: fixed;*/
+    background-color: rgb(243, 243, 243);
+    /*background-repeat: no-repeat;
+    background-attachment: fixed;*/
 }
 
 .Icell {
-	/*margin: top right bottom left*/
-	/*margin: 9px 9px 9px 9px;*/
-	margin-top: 10px;
-	margin-bottom: 9px;
-	background: #fff;
-	color: #333;
-	filter: progid:DXImageTransform.Microsoft.Shadow(color=#909090, direction=120, strength=4);
-	-moz-box-shadow: 1px 1px 10px #909090;
-	-webkit-box-shadow: 1px 1px 10px #909090;
-	box-shadow: 1px 1px 10px #909090;
-	/*opacity: 1;*/
+    margin-top: 10px;
+    margin-bottom: 9px;
+    background: #fff;
+    color: #333;
+    /*设置阴影*/
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=#909090, direction=120, strength=4);
+    -moz-box-shadow: 1px 1px 10px #909090;
+    -webkit-box-shadow: 1px 1px 10px #909090;
+    box-shadow: 1px 1px 10px #909090;
+
+    /*opacity: 1;*/
+    border-radius: 4px; /*设置边框圆角*/
 }
 
+.borderStyle {
+    transition: border-left-color 1s inherit;
+    border: 1px #ddd solid;
+}
 
+.borderStyle:hover {
+    border-left-color: #45bcf9;
+}
 
 .mm-menu {
-	/*--mm-color-background: #28A4C9;*/
-	/*--mm-sidebar-expanded-size:700px;*/
-	/*--mm-offset-top: 6%*/
-	/*--mm-sidebar-expanded-size:300px;*/
+    /*--mm-color-background: #28A4C9;*/
+    /*--mm-sidebar-expanded-size:700px;*/
+    /*--mm-offset-top: 6%*/
+    /*--mm-sidebar-expanded-size:300px;*/
 }
 
-.my-navbar {
-	/*padding: 20px 0;*/
-	transition: background 0.5s ease-in-out, padding 0.5s ease-in-out;
+.testBorder {
+    border: red solid 1px;
 }
 
 .my-navbar a {
-	background: transparent !important;
-	/*color: #fff !important*/
+    background: transparent !important;
+    transition: color 0.5s ease-in-out;
 }
 
 .my-navbar a:hover {
-	color: #45bcf9 !important;
-	background: transparent;
-	outline: 0
+    color: #45bcf9 !important;
+    background: transparent;
+    outline: 0
 }
-
-.my-navbar a {
-	transition: color 0.5s ease-in-out;
-}
-
-
-/*-webkit-transition ;-moz-transition*/
 
 .top-nav {
-	padding: 0;
-	background: #000;
-}
-
-button.navbar-toggle {
-	background-color: #fbfbfb;
-}
-
-
-/*整个背景都是transparent透明的，会看不到，所以再次覆盖一下*/
-
-button.navbar-toggle>span.icon-bar {
-	background-color: #dedede
+    padding: 0;
+    background: #000;
 }
 
 #tabContainer {
-	z-index: 9999;
+    z-index: 9999;
 }
 
 @-webkit-keyframes myfirst {
-	0%{margin-top: -50px;opacity: 0.1;}
-	100%{margin-top:10px;opacity: 1;}
+    0% {
+        margin-top: -50px;
+        opacity: 0.1;
+    }
+    100% {
+        margin-top: 10px;
+        opacity: 1;
+    }
 }
 
-.Loadanimation{
-	margin-top: 10px;
-	margin-bottom: 9px;
-	-webkit-animation: myfirst 1.5s;
+/*模块加载动画*/
+.Loadanimation {
+    margin-top: 10px;
+    margin-bottom: 9px;
+    -webkit-animation: myfirst 1.5s;
 }
+
+.icon {
+    width: 3em;
+    height: 3em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+}
+
+#user_avator > {
+    border: red solid 1px;
+}
+
+@-webkit-keyframes loadhigh {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes listli {
+    0% {
+        margin-top: 20px;
+    }
+    100% {
+        margin-top: 0px;
+    }
+}
+
+#login_template > button {
+    overflow: hidden;
+}
+
+.loginAndLogOut {
+    margin-right: 110px;
+    overflow: hidden;
+}
+
+.loginAndLogOut > li {
+    position: absolute;
+    list-style: none;
+    padding: 0px;
+    right: 1px;
+}
+
+#login_li {
+    top: 1px;
+}
+
+#login_success_userInfo {
+    opacity: 0;
+    margin-top: 40px;
+    display: none;
+}
+
+.dropdownAnimation {
+    min-width: 90px;
+    overflow: hidden;
+    -webkit-animation: loadhigh linear 1s;
+}
+
+.dropdownAnimation > li {
+    position: relative;
+    -webkit-animation: listli 1s;
+}
+
+#login_template > #Successicon {
+    overflow: hidden;
+    position: absolute;
+    /* right:35px;*/
+    font-size: 15px;
+    display: none;
+    opacity: 0;
+}
+
+
+
+
+
+
 

@@ -38,47 +38,47 @@ public class JobController extends BaseController {
             Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(triggerGroupName));
             for (TriggerKey triggerKey : triggerKeySet) {
                 Trigger t = scheduler.getTrigger(triggerKey);
+                JobKey jobKey = t.getJobKey();
+                JobDetail jd = scheduler.getJobDetail(jobKey);
+                JobEntity jobInfo = new JobEntity();
+                jobInfo.setJobName(jobKey.getName());
+
+                jobInfo.setJobGroup(jobKey.getGroup());
+                //执行器名称
+                jobInfo.setTriggerName(triggerKey.getName());
+                //执行器组名称
+                jobInfo.setTriggerGroupName(triggerKey.getGroup());
+                //时间Cron表达式
                 if (t instanceof CronTrigger) {
                     CronTrigger trigger = (CronTrigger) t;
-                    JobKey jobKey = trigger.getJobKey();
-                    JobDetail jd = scheduler.getJobDetail(jobKey);
-                    JobEntity jobInfo = new JobEntity();
-                    jobInfo.setJobName(jobKey.getName());
-
-                    jobInfo.setJobGroup(jobKey.getGroup());
-                    //执行器名称
-                    jobInfo.setTriggerName(triggerKey.getName());
-                    //执行器组名称
-                    jobInfo.setTriggerGroupName(triggerKey.getGroup());
-                    //时间Cron表达式
                     jobInfo.setCronExpr(trigger.getCronExpression());
-                    //下次运行时间
-                    jobInfo.setNextFireTime(trigger.getNextFireTime());
-                    //上次运行时间
-                    jobInfo.setPreviousFireTime(trigger.getPreviousFireTime());
-                    //启动时间
-                    jobInfo.setStartTime(trigger.getStartTime());
-                    //结束时间
-                    jobInfo.setEndTime(trigger.getEndTime());
-                    jobInfo.setJobClass(jd.getJobClass().getCanonicalName());
-                    // jobInfo.setDuration(Long.parseLong(jd.getDescription()));
-                    Trigger.TriggerState triggerState = scheduler
-                            .getTriggerState(trigger.getKey());
-                    jobInfo.setJobStatus(triggerState.toString());// NONE无,
-                    // NORMAL正常,
-                    // PAUSED暂停,
-                    // COMPLETE完全,
-                    // ERROR错误,
-                    // BLOCKED阻塞
-                    JobDataMap map = scheduler.getJobDetail(jobKey).getJobDataMap();
-                    if (null != map && map.size() != 0) {
-                        jobInfo.setCount(Integer.parseInt((String) map.get("count")));
-                        jobInfo.setJobDataMap(map);
-                    } else {
-                        jobInfo.setJobDataMap(new JobDataMap());
-                    }
-                    jobInfos.add(jobInfo);
                 }
+                //下次运行时间
+                jobInfo.setNextFireTime(t.getNextFireTime());
+                //上次运行时间
+                jobInfo.setPreviousFireTime(t.getPreviousFireTime());
+                //启动时间
+                jobInfo.setStartTime(t.getStartTime());
+                //结束时间
+                jobInfo.setEndTime(t.getEndTime());
+                jobInfo.setJobClass(jd.getJobClass().getCanonicalName());
+                // jobInfo.setDuration(Long.parseLong(jd.getDescription()));
+                Trigger.TriggerState triggerState = scheduler
+                        .getTriggerState(t.getKey());
+                jobInfo.setJobStatus(triggerState.toString());// NONE无,
+                // NORMAL正常,
+                // PAUSED暂停,
+                // COMPLETE完全,
+                // ERROR错误,
+                // BLOCKED阻塞
+                JobDataMap map = scheduler.getJobDetail(jobKey).getJobDataMap();
+                if (null != map && map.size() != 0) {
+                    jobInfo.setCount(Integer.parseInt((String) map.get("count")));
+                    jobInfo.setJobDataMap(map);
+                } else {
+                    jobInfo.setJobDataMap(new JobDataMap());
+                }
+                jobInfos.add(jobInfo);
             }
         }
         return success(jobInfos);
@@ -95,6 +95,7 @@ public class JobController extends BaseController {
     public void addjob(@RequestParam(value = "jobClassName") String jobClassName,
                        @RequestParam(value = "jobGroupName") String jobGroupName,
                        @RequestParam(value = "cronExpression") String cronExpression) throws Exception {
+
         // 启动调度器
         scheduler.start();
         //构建job信息
@@ -206,11 +207,12 @@ public class JobController extends BaseController {
      * @throws Exception
      */
     @PostMapping(value = "/deletejob")
-    public void deletejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
+    public String deletejob(@RequestParam(value = "jobClassName") String jobClassName, @RequestParam(value = "jobGroupName") String jobGroupName) throws Exception {
         scheduler.pauseTrigger(TriggerKey.triggerKey(jobClassName, jobGroupName));
         scheduler.unscheduleJob(TriggerKey.triggerKey(jobClassName, jobGroupName));
         scheduler.deleteJob(JobKey.jobKey(jobClassName, jobGroupName));
         log.info("移除任务成功：{}",jobGroupName);
+        return success();
     }
 
 

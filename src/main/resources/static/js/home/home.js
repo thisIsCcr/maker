@@ -5,39 +5,82 @@ $(document).ready(function () {
     baseHome = {
         hostname: window.location.hostname,
         staticResourcePort: 8090,
-        staticImgURL: function () {
-            if (this.hostname == "localhost") {
-                return "192.168.0.112:{0}".format(this.staticResourcePort)
+        settingStaticLoadURL:"undefined",
+        staticImgURLstaticImgURL: function () {
+            if(this.settingStaticLoadURL!="undefined"){
+                return this.settingStaticLoadURL;
             }
-            return this.hostname + ":{0}".format(this.staticResourcePort)
+            if (this.hostname == "localhost" || this.hostname == "192.168.0.196") {
+                return "http://192.168.0.112"
+            }
+            return this.hostname;
         },
+        musicData:[],
         iconSwitch: $("#my-icon"),
-        promptTitle: "信息",
-        successPrompt: function () {
-            if (arguments.length == 0) {
-                console.error("Error! params not norm")
-                return;
-            }
-            toastr.success(arguments[0], this.promptTitle)
+        aValidator:function (callback) {
+                if (typeof callback != "function") {
+                    console.error("参数错误")
+                    return;
+                }
+                $.ajax({
+                    url: "/getAuthenicatedResult",
+                    method: "get",
+                    dataType: "json",
+                    async: true,
+                    success: callback
+                })
+            },
+        logout: function () {
+            var self = this;
+            $.ajax({
+                url: "/user/logout",
+                method: "get",
+                dataType: "json",
+                async: true,
+                success: function (result) {
+                    if (result.isSuccess) {
+                        self.successPrompt("退出登录")
+                        logoutSetting()
+                    }
+                }
+            })
         },
+        getCurrentUseInfo: function (callback) {
+            $.ajax({
+                url: "/getPrincipal",
+                method: "get",
+                dataType: "json",
+                async: true,
+                success: callback
+            })
+        },
+        promptTitle: "信息",
+        successPrompt:function () {
+                if (arguments.length == 0) {
+                    console.error("Error! params not norm")
+                    return;
+                }
+                toastr.success(arguments[0], this.promptTitle)
+            },
         errorPrompt: function () {
             if (arguments.length == 0) {
                 console.error("Error! params not norm")
                 return;
             }
             toastr.error(arguments[0], this.promptTitle)
-        },
+        } ,
         warningPrompt: function () {
             if (arguments.length == 0) {
                 console.error("Error! params not norm")
                 return;
             }
             toastr.warning(arguments[0], this.promptTitle)
-        },
+        }
+        ,
         autoCloseTime: 4000
     }
 
-    var registerWebSocketEvent=function(){
+    var registerWebSocketEvent = function () {
         socket.onmessage = function (event) {
             console.log(typeof event.data)
             if (typeof event.data == "string") {
@@ -59,14 +102,47 @@ $(document).ready(function () {
         }
 
     }
+    $.get("/fileAudio/getAllMusicInfo",function(result){
+        console.log(result.isSuccess)
+        if(result.isSuccess){
+            var musicData=result.data
+            for (key in musicData){
+                baseHome.musicData.push({
+                    name: musicData[key].audioName,
+                    artist: musicData[key].audioArtist,
+                    url: baseHome.staticImgURLstaticImgURL()+musicData[key].audioPath,
+                    cover: baseHome.staticImgURLstaticImgURL()+musicData[key].coverPath,
+                    lrc: baseHome.staticImgURLstaticImgURL()+musicData[key].lrcPath
+                })
+            }
+            const ap = new APlayer({
+                container: document.getElementById('aplayer'),
+                fixed: true,
+                lrcType: 3,
+                audio:baseHome.musicData
+            });
+        }else{
+            baseHome.errorPrompt("音乐初始化失败")
+        }
+    },"json")
 
 
+   /* [{
+        name: 'Light',
+        artist: 'San Holo',
+        url: 'http://192.168.0.112:8090/home/resource/systemResource/audio/San%20Holo%20-%20Light.mp3',
+        cover: 'http://192.168.0.112:8090/home/resource/systemResource/img/San%20Holo%20-%20Light.jpg',
+        lrc: "http://192.168.0.112:8090/home/resource/systemResource/lrc/San%20Holo%20-%20Light.lrc"
+    }]*/
+
+
+    //消息设置
     toastr.options = {
         "closeButton": true,
         "debug": false,
         "newestOnTop": false,
         "progressBar": true,
-        "positionClass": "toast-top-right",
+        "positionClass": "toast-bottom-right",
         "preventDuplicates": false,
         "showDuration": baseHome.autoCloseTime,
         "hideDuration": "1000",
@@ -104,6 +180,7 @@ $(document).ready(function () {
      * @type {*|jQuery}
      */
     var $menu = $("#my-menu").mmenu({
+        wrappers: ["bootstrap3"]
         /*"extensions":[
             "position-bottom"
         ],
@@ -130,13 +207,58 @@ $(document).ready(function () {
         }
     })
 
+    /**
+     * 是否登录验证
+     */
+    baseHome.aValidator(function (result) {
+        var self = this;
+        if (result.data) {
+            baseHome.getCurrentUseInfo(function (userinfo) {
+                loginSuccessSetting(userinfo.data)
+            })
+        }
+    })
+
+    /**
+     * 登录后的操作
+     */
+    var loginSuccessSetting = function () {
+        if (arguments.length == 0) {
+            return;
+        }
+        var data = arguments[0];
+        //重新登录
+        if (typeof socket == "object") {
+            socket.close();
+        }
+        socket = new WebSocket("ws://{0}:10010/websocket?sessionId={1}".format(baseHome.hostname, data));
+        registerWebSocketEvent();
+        $("#login").parent().stop().animate({top: -52, opacity: 0}, 1000, 'easeOutQuad').hide("1000")
+        $("#login_success_userInfo").stop().show().animate({
+            opacity: 1,
+            top: -57
+        }, 1000, 'easeOutQuad');
+    }
+
+    /**
+     * 退出登录
+     */
+    var logoutSetting = function () {
+        $("#login").parent().stop().show().animate({top: 1, opacity: 1}, 1000, 'easeOutQuad')
+        $("#login_success_userInfo").stop().animate({
+            opacity: 0,
+            top: 40
+        }, 1000, 'easeOutQuad').hide("1000");
+
+    };
 
     /**
      * 打开登陆页面
      */
     $("#login").on("click", function () {
+        var self = this;
         $.confirm({
-            title: "登录",
+            title: "暗号内容",
             content: "url:/static/LoginTemplate",
             //theme: 'supervan',
             draggable: false,
@@ -151,23 +273,21 @@ $(document).ready(function () {
                         if (!validatorContext.isValid()) {
                             return false;
                         }
-                        var loginValidator=false;
+                        var loginValidator = false;
                         $.ajax({
-                            url:"/user/login",
-                            async:false,
-                            method:"post",
-                            data:form.serialize(),
-                            dataType:"json",
+                            url: "/user/login",
+                            async: false,
+                            method: "post",
+                            data: form.serialize(),
+                            dataType: "json",
                             success: function (result) {
-                                if(result.isSuccess){
-                                    socket = new WebSocket("ws://{0}:10010/websocket?sessionId={1}".format(baseHome.hostname,result.data))
-                                    registerWebSocketEvent();
-                                    baseHome.successPrompt("登录成功")
-                                    loginValidator=true;
+                                if (result.isSuccess) {
+                                    loginSuccessSetting(result.data)
+                                    loginValidator = true;
                                 }
                             }
                         })
-                        if(!loginValidator){
+                        if (!loginValidator) {
                             console.log("登录失败")
                             return false;
                         }
@@ -181,7 +301,6 @@ $(document).ready(function () {
                 }
             },
             onContentReady: function () {
-                var self = this;
                 this.$content.find("#home_login").bootstrapValidator({
                     feedbackIcons: {
                         valid: 'glyphicon glyphicon-ok',
@@ -388,6 +507,7 @@ $(document).ready(function () {
 function handler(e) {
     //doSomething(); // do something here
 }
+
 document.addEventListener('mousewheel', handler, {passive: true});
 
 

@@ -9,6 +9,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
  * 存储用户连接信息
  **/
 public class Global {
-    public static ChannelGroup group = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+
+    public static ChannelGroup group = new DefaultChannelGroup("webSocket",GlobalEventExecutor.INSTANCE);
 
 }
