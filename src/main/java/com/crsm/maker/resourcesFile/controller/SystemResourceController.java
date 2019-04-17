@@ -84,35 +84,39 @@ public class SystemResourceController extends BaseController {
         StringBuilder fileTypePath = new StringBuilder("/");
         FileImg fileImg = null;
         Integer resType = 4;
-        log.info("文件类型：{}", file.getContentType());
-        switch (file.getContentType()) {
-            //文本文件
-            case MediaType.TEXT_PLAIN_VALUE:
-                fileTypePath.append("text");
-                resType = 3;
-                break;
-            //图片类型
-            case MediaType.IMAGE_PNG_VALUE:
-            case MediaType.IMAGE_GIF_VALUE:
-            case MediaType.IMAGE_JPEG_VALUE:
-                resType = 2;
-                fileTypePath.append("img");
-                BufferedImage image = ImageIO.read(file.getInputStream());
-                fileImg = new FileImg();
-                fileImg.setImgHeight(image.getHeight());
-                fileImg.setImgWidth(image.getWidth());
-                break;
-            case "audio/mp3":
-                fileTypePath.append("mp3");
-                resType = 0;
-                break;
-            case "video/mp4":
-                resType = 1;
-                fileTypePath.append("mp4");
-                break;
-            default:
-                fileTypePath.append("other");
-                break;
+        if(file.getContentType()!=null){
+            log.info("文件类型：{}", file.getContentType());
+            switch (file.getContentType()) {
+                //文本文件
+                case MediaType.TEXT_PLAIN_VALUE:
+                    fileTypePath.append("text");
+                    resType = 3;
+                    break;
+                //图片类型
+                case MediaType.IMAGE_PNG_VALUE:
+                case MediaType.IMAGE_GIF_VALUE:
+                case MediaType.IMAGE_JPEG_VALUE:
+                    resType = 2;
+                    fileTypePath.append("img");
+                    BufferedImage image = ImageIO.read(file.getInputStream());
+                    fileImg = new FileImg();
+                    fileImg.setImgHeight(image.getHeight());
+                    fileImg.setImgWidth(image.getWidth());
+                    break;
+                case "audio/mp3":
+                    fileTypePath.append("mp3");
+                    resType = 0;
+                    break;
+                case "video/mp4":
+                    resType = 1;
+                    fileTypePath.append("mp4");
+                    break;
+                default:
+                    fileTypePath.append("other");
+                    break;
+            }
+        }else{
+            fileTypePath.append("other");
         }
         fileTypePath.append("/");
         filePath += fileTypePath.toString();
@@ -157,6 +161,8 @@ public class SystemResourceController extends BaseController {
         log.info("文件上传成功，文件名：{}", fileName);
         return success();
     }
+
+
 
 
     @RequestMapping(value = "getResourceFileInfo", method = RequestMethod.GET)

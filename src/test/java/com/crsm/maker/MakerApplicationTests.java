@@ -20,6 +20,8 @@ public  class MakerApplicationTests implements Runnable{
 
 
 
+
+
     public static void main(String[] args) throws InterruptedException {
         final String upuserName = "/home/resource/systemResource/123456/img/73718346_p0.png";
         for (int i = 0;i < upuserName.length();i++){

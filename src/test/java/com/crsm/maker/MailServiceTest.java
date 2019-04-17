@@ -40,7 +40,7 @@ public class MailServiceTest {
 
     @Test
     public void getAllJob() throws SchedulerException {
-        iSystemResourceService.getAllMusicInfo();
+        //iSystemResourceService.getAllMusicInfo();
     }
 
     @Test

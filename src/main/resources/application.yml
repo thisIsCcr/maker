@@ -61,5 +61,3 @@ management:
 mybatis-plus:
   type-aliases-package: com.crsm.maker.*.mapper
   mapper-locations: classpath*:mapper/*/*.xml
-  global-config:
-    refresh: true

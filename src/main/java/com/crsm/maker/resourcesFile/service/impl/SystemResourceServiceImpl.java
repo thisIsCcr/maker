@@ -1,8 +1,7 @@
 package com.crsm.maker.resourcesFile.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.crsm.maker.resourcesFile.entity.SysResource;
@@ -37,11 +36,10 @@ public class SystemResourceServiceImpl extends ServiceImpl<SystemResourceMapper,
         return systemResourceMapper.saveAndReturnId(sysResource);
     }
 
+
+
     @Override
-    public List<SysResource> getAllMusicInfo() {
-        LambdaQueryWrapper wrapper=Wrappers.<SysResource>lambdaQuery()
-                .notExists("SELECT audio_lrc_id FROM file_audio fa WHERE fa.`audio_lrc_id`=sr.`id`")
-                .likeLeft(SysResource::getResName, ".lrc");
+    public List<SysResource> getAllMusicInfo(Wrapper wrapper) {
         return systemResourceMapper.getAllMusicInfo(wrapper);
 
     }

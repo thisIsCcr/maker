@@ -18,19 +18,73 @@
         $("#toolbar_audio>button").on("click", function () {
             switch ($(this).attr("id")) {
                 case "btn_add":
-                    pageAudio.add();
+                    pageAudio.addOrEdit();
+                    break;
+                case 'btn_edit':
+                    console.log(pageAudio.selectionId)
+                    if (pageAudio.selectionId == null) {
+                        baseHome.warningPrompt("请选择修改")
+                        return;
+                    }
+                    pageAudio.addOrEdit(true);
                     break;
             }
         })
 
+        $("#musicList").on("click", ".MusicItem", function () {
+            selectedStyle($(this).attr("id"))
+        })
+
+        var selectedStyle = function () {
+            if (pageAudio.selectionId != arguments[0]) {
+                $("#" + pageAudio.selectionId).removeClass("animated infinite bounce fats");
+                pageAudio.selectionId = arguments[0]
+            } else {
+                pageAudio.selectionId = null;
+            }
+            $("#" + arguments[0]).toggleClass("animated infinite bounce fats");
+
+        }
+
 
         var pageAudio = {
+            selectionId: null,
+            listTemplate: "<div class=\"col-md-2 col-xs-6 MusicItem\" id='music_{0}'>\n" +
+            "            <div class=\"thumbnail\">\n" +
+            "                <a class=\"thumbnail\" href=\"javascript:void(0)\">\n" +
+            "                    <img src=\"{1}\" alt=\"...\" width='100%'>\n" +
+            "                </a>\n" +
+            "                <div class=\"caption\">\n" +
+            "                    <h4>{2}</h4>\n" +
+            "                    <h5>{3}</h5>\n" +
+            "                </div>\n" +
+            "            </div>\n" +
+            "        </div>",
+            pageIniti: function (callback) {
+                var self = this;
+                $.get('/fileAudio/getMusicList', function (result) {
+                    if (result.isSuccess) {
+                        var data = result.data;
+                        var contetn = "";
+                        for (key in data) {
+                            contetn += self.listTemplate.format(data[key].id, baseHome.staticImgURLstaticImgURL() + data[key].coverPath, data[key].audioName, data[key].audioArtist)
+                        }
+                        if (contetn) $("#musicList").append(contetn)
+                    }
+                    callback
+                }, "json")
+            },
+            dataLoadSatus: [],
+            dataLoadComplete: function () {
+            },
             iconSelect: '<div class="col-md-4 col-xs-4">\n' +
             '            <a class="thumbnail musicCoverListGroup" href="javascript:void(0)" id="iconCover_{0}"  >\n' +
             '                <img src="{1}" alt="图片" data-value="{2}" />\n' +
             '            </a>\n' +
             '        </div>',
-            add: function () {
+            addOrEdit: function () {
+                var isEditEvent = arguments.length > 0 ? arguments[0] : false;
+                var id = isEditEvent ? this.selectionId.replace("music_", "") : null;
                 var baseSelf = this;
                 $.confirm({
                     columnClass: 'col-md-12',
@@ -40,12 +94,30 @@
                         var self = this;
                         var iSelectDiv = this.$content.find("#icon_select_div");
                         var coverImg = this.$content.find("#cover_imgage");
+
+                        baseSelf.dataLoadComplete = function () {
+                            this.dataLoadSatus.push(arguments[0])
+                            if (this.dataLoadSatus.length > 1) {
+                                if (isEditEvent) {
+                                    $.get("fileAudio/getEditMusicInfo/{0}".format(id), function (result) {
+                                        var data = result.data;
+                                        self.$content.find("#lrc_select").find("option[value={0}]".format(data.audioLrcId)).attr("selected", "selected")
+                                        self.$content.find("#audio_select").find("option[value={0}]".format(data.resourceId)).attr("selected", "selected")
+                                        self.$content.find("#cover_imgage").find("img").prop("data-value", data.audioCoverId);
+                                        self.$content.find("#cover_imgage").find("img").prop("src", baseHome.staticImgURLstaticImgURL() + data.lrcPath);
+                                        self.$content.find("#audio_artist").val(data.audioArtist)
+                                        self.$content.find("#audio_name").val(data.audioName)
+                                    }, "json")
+                                }
+                                this.dataLoadSatus = [];
+                            }
+                        }
                         $.get("/fileImage/getCoverImageInfo", function (result) {
                             if (result.isSuccess) {
                                 var data = result.data;
                                 var content = "";
                                 for (key in data) {
-                                    content += baseSelf.iconSelect.format(data[key].id, data[key].resPath, data[key].id)
+                                    content += baseSelf.iconSelect.format(data[key].id, baseHome.staticImgURLstaticImgURL() + data[key].resPath, data[key].id)
                                 }
                                 iSelectDiv.find("div[class='row']").append(content);
                                 self.$content.find(".musicCoverListGroup").on("click", function () {
@@ -55,7 +127,7 @@
                                 })
                             }
                         }, "json");
-                        $.get("/fileAudio/getAllLrcFileInfo", function (result) {
+                        $.get("/fileAudio/getAllLrcFileInfo", {id: id}, function (result) {
                             if (result.isSuccess) {
                                 if (result.data.length > 0) {
                                     var data = result.data;
@@ -66,8 +138,9 @@
                                     self.$content.find("#lrc_select").append(content);
                                 }
                             }
+                            baseSelf.dataLoadComplete("lrc")
                         }, "json");
-                        $.get("/fileAudio/getAllAudioFileInfo", function (result) {
+                        $.get("/fileAudio/getAllAudioFileInfo", {id: id}, function (result) {
                             if (result.isSuccess) {
                                 if (result.data.length > 0) {
                                     var data = result.data;
@@ -78,6 +151,7 @@
                                     self.$content.find("#audio_select").append(content);
                                 }
                             }
+                            baseSelf.dataLoadComplete("audio")
                         }, "json");
 
                         //添加事件
@@ -93,6 +167,8 @@
                                 }
                             })
                         })
+
+
                     },
                     buttons: {
                         ok: {
@@ -106,6 +182,7 @@
                                 var audioArtist = self.find("#audio_artist").val()
                                 var audioName = self.find("#audio_name").val()
                                 var addConten = {
+                                    id: id,
                                     //描述
                                     description: description,
                                     //音乐名称
@@ -123,8 +200,9 @@
                                     baseHome.warningPrompt("请输入必要参数")
                                     return false;
                                 }
+                                var url = isEditEvent ? "/fileAudio/updateMusic" : "/fileAudio/addMusic";
                                 $.ajax({
-                                    url: "/fileAudio/addMusic",
+                                    url: url,
                                     method: "post",
                                     headers: {
                                         Accept: "application/json; charset=utf-8"
@@ -147,11 +225,10 @@
                         }
                     }
                 })
-            },
-            iconUpdate: function () {
-
             }
         }
+
+        pageAudio.pageIniti(selectedStyle());
 
     })
 
@@ -172,21 +249,7 @@
             </button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-2 col-md-offset-2 ">
-            <div class="thumbnail">
-                <a class="thumbnail" href="javascript:void(0)">
-                    <img src="http://192.168.0.112/systemResource/img/defaultAvator.jpg" alt="...">
-                </a>
-                <div class="caption">
-                    <h3>Thumbnail label</h3>
-                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida
-                        at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                    <!--<p><a href="#" class="btn btn-primary" role="button">Button</a>
-                        <a href="#" class="btn btn-default" role="button">Button</a></p>-->
-                </div>
-            </div>
-        </div>
+    <div class="row" id="musicList">
 
     </div>
 

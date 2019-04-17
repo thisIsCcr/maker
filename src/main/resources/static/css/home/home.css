@@ -1,8 +1,6 @@
 html,
 body {
     background-color: rgb(243, 243, 243);
-    /*background-repeat: no-repeat;
-    background-attachment: fixed;*/
 }
 
 .Icell {
@@ -15,7 +13,6 @@ body {
     -moz-box-shadow: 1px 1px 10px #909090;
     -webkit-box-shadow: 1px 1px 10px #909090;
     box-shadow: 1px 1px 10px #909090;
-
     /*opacity: 1;*/
     border-radius: 4px; /*设置边框圆角*/
 }
@@ -60,22 +57,14 @@ body {
     z-index: 9999;
 }
 
-@-webkit-keyframes myfirst {
-    0% {
-        margin-top: -50px;
-        opacity: 0.1;
-    }
-    100% {
-        margin-top: 10px;
-        opacity: 1;
-    }
-}
 
 /*模块加载动画*/
 .Loadanimation {
     margin-top: 10px;
     margin-bottom: 9px;
-    -webkit-animation: myfirst 1.5s;
+    animation-duration: 3s;
+    animation-delay: 2s;
+    animation-iteration-count: infinite;
 }
 
 .icon {
@@ -88,24 +77,6 @@ body {
 
 #user_avator > {
     border: red solid 1px;
-}
-
-@-webkit-keyframes loadhigh {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes listli {
-    0% {
-        margin-top: 20px;
-    }
-    100% {
-        margin-top: 0px;
-    }
 }
 
 #login_template > button {
@@ -136,13 +107,10 @@ body {
 
 .dropdownAnimation {
     min-width: 90px;
-    overflow: hidden;
-    -webkit-animation: loadhigh linear 1s;
 }
 
 .dropdownAnimation > li {
     position: relative;
-    -webkit-animation: listli 1s;
 }
 
 #login_template > #Successicon {

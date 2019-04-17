@@ -102,8 +102,9 @@ $(document).ready(function () {
         }
 
     }
+
+
     $.get("/fileAudio/getAllMusicInfo",function(result){
-        console.log(result.isSuccess)
         if(result.isSuccess){
             var musicData=result.data
             for (key in musicData){
@@ -175,21 +176,18 @@ $(document).ready(function () {
 
     tabContext = $("#tabContainer").data("tabs");
 
-    /**
-     * 初始化侧边栏
-     * @type {*|jQuery}
-     */
-    var $menu = $("#my-menu").mmenu({
-        wrappers: ["bootstrap3"]
-        /*"extensions":[
-            "position-bottom"
-        ],
-        autoHeight:true*/
+    var menuConfig={
+        wrappers: ["bootstrap3"],
+        extensions:[
+            "fx-menu-fade",
+            "fx-listitems-slide",
+            /*"fullscreen"*/
+        ]
         /*sidebar: {
             collapsed: "(min-width:200px)",
             expanded: "(min-width:100px)"
-        },
-        "iconbar": {
+        },*/
+        /*"iconbar": {
             "add": true,
             "top": [
                 "<a href='#/'><i class='glyphicon glyphicon-globe'></i></a>",
@@ -200,12 +198,19 @@ $(document).ready(function () {
                 "<a href='#/'><i class='glyphicon glyphicon-filter'></i></a>",
                 "<a href='#/'><i class='glyphicon glyphicon-briefcase'></i></a>"
             ]
-        }*/
-    }, {
-        offCanvas: {
+        },*/
+       /* offCanvas: {
             pageNodetype: "section"
-        }
-    })
+        }*/
+    };
+
+    /**
+     * 初始化侧边栏
+     * @type {*|jQuery}
+     */
+    var $menu = $("#my-menu").mmenu(menuConfig)
+
+
 
     /**
      * 是否登录验证
@@ -424,7 +429,7 @@ $(document).ready(function () {
     /**
      *  单击浮动效果
      */
-    var click_cnt = 0;
+   /* var click_cnt = 0;
     //获取HTML
     var $html = document.getElementsByTagName("html")[0];
     //获取BODY
@@ -501,7 +506,7 @@ $(document).ready(function () {
             }, 8);
         }, 70);
         $body.appendChild($elem);
-    };
+    };*/
 })
 
 function handler(e) {

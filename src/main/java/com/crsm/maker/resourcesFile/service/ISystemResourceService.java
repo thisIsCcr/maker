@@ -1,5 +1,6 @@
 package com.crsm.maker.resourcesFile.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -25,5 +26,5 @@ public interface ISystemResourceService extends IService<SysResource> {
      * 使用自定义sql wrapper
      * @return
      */
-    List<SysResource> getAllMusicInfo();
+    List<SysResource> getAllMusicInfo(Wrapper wrapper);
 }

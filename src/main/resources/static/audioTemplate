@@ -2,7 +2,7 @@
 <div class="col-md-4 col-xs-12 col-md-offset-4 marginright">
             <div class="thumbnail">
                  <a class="thumbnail" href="javascript:void(0)" id="cover_imgage">
-                                    <img src="http://192.168.0.112/systemResource/img/defaultAvator.jpg" alt="..." data-value="19" >
+                                    <img src="http://192.168.0.112/systemResource/img/defaultAvator.jpg" alt="封面" data-value="19" width='100%'>
                                 </a>
                 <div class="caption ">
                     <h3 class="borderStyle"><input type="text" class="form-control" id="audio_name" placeholder="音乐名称"></h3>
@@ -13,7 +13,7 @@
                     <p class="borderStyle"><select class="form-control" id="audio_select">
                                                        <option value="">请选择音频文件</option>
                                                    </select></p>
-                    <p class="borderStyle"><textarea class="form-control" id="audio_description" rows="5" id="description" placeholder="描述：这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...（可不填"></textarea></p>
+                    <p style='display:none'><textarea class="form-control" id="audio_description" rows="5" id="description" placeholder="描述：这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...这是示例文本...（可不填"></textarea></p>
                 </div>
             </div>
         </div>

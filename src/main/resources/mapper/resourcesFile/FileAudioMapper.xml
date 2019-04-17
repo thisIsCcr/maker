@@ -26,4 +26,26 @@
           LEFT JOIN `sys_resource` sre ON sre.`id`=fa.`resource_id`
     </select>
 
+    <select id="getMusicList" resultType="com.crsm.maker.resourcesFile.entity.FileAudio">
+        SELECT
+          fa.*,
+          sr.`res_path` as coverPath
+        FROM
+          `file_audio` fa
+          INNER JOIN `sys_resource` sr
+            ON sr.id = fa.`audio_cover_id`
+          ${ew.customSqlSegment}
+    </select>
+
+    <select id="getEditMusicInfo" resultType="com.crsm.maker.resourcesFile.entity.FileAudio">
+        SELECT
+          fa.*,
+          sr.`res_path` as lrcPath
+        FROM
+          `file_audio` fa
+          INNER JOIN `sys_resource` sr
+            ON sr.id = fa.`audio_cover_id`
+          ${ew.customSqlSegment}
+    </select>
+
 </mapper>
